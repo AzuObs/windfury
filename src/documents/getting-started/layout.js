@@ -1,11 +1,10 @@
 import React from 'react';
+import content from './index.md';
 
 export default React.createClass({
   render: function() {
     return (
-      <div>
-        <h1>Not Found</h1>
-      </div>
+      <div dangerouslySetInnerHTML={{__html: content}}></div>
     );
   }
 });
