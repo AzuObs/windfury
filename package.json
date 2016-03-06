@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm test",
+    "test": "./node_modules/.bin/mocha",
     "dev": "./node_modules/.bin/webpack --config ./compiler/lib/webpack/DevConfig",
     "watch-compiler": "./node_modules/.bin/babel ./compiler/src -d ./compiler/lib --watch"
   },
@@ -23,6 +23,7 @@
     "html-loader": "^0.4.3",
     "image-webpack-loader": "^1.6.3",
     "markdown-loader": "^0.1.7",
+    "mocha": "^2.4.5",
     "node-sass": "^3.4.2",
     "sass-loader": "^3.1.2",
     "static-site-generator-webpack-plugin": "^2.0.1",
