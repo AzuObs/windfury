@@ -2,9 +2,12 @@ import path from 'path';
 import webpack from 'webpack';
 import fs from 'fs';
 import StaticSiteGeneratorPlugin from 'static-site-generator-webpack-plugin';
+import CleanWebpackPlugin from 'clean-webpack-plugin';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import AssetsPlugin from 'assets-webpack-plugin';
 
 const babelrc = fs.readFileSync(path.join(process.cwd(), '.babelrc'));
-const paths = ['/', '/about/'];
+const paths = ['/', '/about/', '/support/'];
 
 let babelLoaderQuery = {};
 
@@ -24,7 +27,7 @@ export default {
   },
   output: {
     path: path.join(process.cwd(), 'dist'),
-    filename: 'website-[hash].js',
+    filename: '[name]-[hash].js',
     libraryTarget: 'umd'
   },
   module: {
@@ -41,11 +44,10 @@ export default {
       },
       {
         test: /\.scss$/,
-        loaders: [
+        loader: ExtractTextPlugin.extract(
           'style',
-          'css?modules&importLoaders=2&sourceMap&localIdentName=[local]',
-          'sass?outputStyle=expanded&sourceMap'
-        ]
+          ['css?modules&importLoaders=2&sourceMap&localIdentName=[local]', 'sass?outputStyle=expanded&sourceMap']
+        )
       },
       {
         test: /\.(woff|woff2|ttf)$/,
@@ -58,6 +60,10 @@ export default {
       {
         test: /\.(jpg|png|gif|svg)$/,
         loader: 'url?limit=10000&name=[path][name]-[hash].[ext]'
+      },
+      {
+        test: /\.json$/,
+        loader: 'json'
       }
     ]
   },
@@ -70,7 +76,12 @@ export default {
         NODE_ENV: JSON.stringify('development')
       }
     }),
-    new StaticSiteGeneratorPlugin('main', paths)
+    new StaticSiteGeneratorPlugin('main', paths),
+    new CleanWebpackPlugin([path.join(process.cwd(), './dist')], {
+      root: process.cwd()
+    }),
+    new ExtractTextPlugin('main-[chunkhash].css'),
+    new AssetsPlugin()
   ],
   resolve: {
     modulesDirectories: ['src', 'node_modules'],
