@@ -1,9 +1,6 @@
 import {
-  HotModuleReplacementPlugin,
   IgnorePlugin,
-  DefinePlugin,
-  optimize,
-  NoErrorsPlugin
+  DefinePlugin
 } from 'webpack';
 import fs from 'fs';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
@@ -13,7 +10,6 @@ import recursive from 'recursive-readdir';
 import StaticSiteGeneratorPlugin from 'static-site-generator-webpack-plugin';
 
 const babelrc = fs.readFileSync(path.join(process.cwd(), '.babelrc'));
-const {OccurenceOrderPlugin} = optimize;
 
 let babelLoaderQuery = {};
 
@@ -23,15 +19,6 @@ try {
   console.error('ERROR: Error parsing .babelrc.');
   console.error(error);
 }
-
-babelLoaderQuery.plugins = babelLoaderQuery.plugins || [];
-babelLoaderQuery.plugins.push(['react-transform', {
-  transforms: [{
-    transform: 'react-transform-hmr',
-    imports: ['react'],
-    locals: ['module']
-  }]
-}]);
 
 export default function(done) {
   let webpackConfig;
@@ -54,20 +41,17 @@ export default function(done) {
       context: path.join(process.cwd(), './src'),
       entry: {
         main: [
-          'webpack-hot-middleware/client',
+          'webpack-dev-server/client?http://localhost:3000/',
           path.join(process.cwd(), './src/client.js')
         ],
-        async: [
-          'webpack-hot-middleware/client',
-          path.join(process.cwd(), './src/async.js')
-        ],
+        async: [path.join(process.cwd(), './src/async.js')],
         static: [path.join(process.cwd(), './src/static.js')]
       },
       output: {
         path: path.join(process.cwd(), './dist'),
         filename: '[name].js',
         libraryTarget: 'umd',
-        publicPath: ''
+        publicPath: 'http://localhost:3000/'
       },
       module: {
         loaders: [
@@ -90,15 +74,15 @@ export default function(done) {
           },
           {
             test: /\.(woff|woff2|ttf)$/,
-            loader: 'url?limit=10000&name=/[path][name]-[hash].[ext]'
+            loader: 'url?limit=10000&name=[path][name]-[hash].[ext]'
           },
           {
             test: /\.eot$/,
-            loader: 'file?name=/[path][name]-[hash].[ext]'
+            loader: 'file?name=[path][name]-[hash].[ext]'
           },
           {
             test: /\.(jpg|png|gif|svg)$/,
-            loader: 'url?limit=10000&name=/[path][name]-[hash].[ext]'
+            loader: 'url?limit=10000&name=[path][name]-[hash].[ext]'
           },
           {
             test: /\.json$/,
@@ -109,9 +93,6 @@ export default function(done) {
       progress: true,
       watch: true,
       plugins: [
-        new OccurenceOrderPlugin(),
-        new HotModuleReplacementPlugin(),
-        new NoErrorsPlugin(),
         new IgnorePlugin(/webpack-stats\.json$/),
         new DefinePlugin({
           'process.env': {

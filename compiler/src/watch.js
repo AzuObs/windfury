@@ -1,41 +1,29 @@
 import webpack from 'webpack';
 import generateDevConfig from './webpack/generateDevConfig';
-import webpackDevMiddleware from 'webpack-dev-middleware';
-import webpackHotMiddleware from 'webpack-hot-middleware';
-import browserSync from 'browser-sync';
+import WebpackDevServer from 'webpack-dev-server';
+import colors from 'colors';
 import path from 'path';
 
-const browserSyncServer = browserSync.create();
+const port = 3000;
 
 generateDevConfig(function(webpackConfig) {
   const compiler = webpack(webpackConfig);
-  const browserSyncServerOpts = {
-    open: false,
-    server: {
-      baseDir: path.join(process.cwd(), './dist'),
-      middleware: [
-        webpackDevMiddleware(compiler, {
-          contentBase: path.join(process.cwd(), './dist'),
-          publicPath: webpackConfig.output.publicPath,
-          noInfo: true,
-          hot: true,
-          inline: true,
-          lazy: false,
-          quiet: true,
-          stats: {
-            colors: true
-          },
-          headers: {
-            'Access-Control-Allow-Origin': '*'
-          }
-        }),
-        webpackHotMiddleware(compiler)
-      ]
+  const server = new WebpackDevServer(compiler, {
+    contentBase: path.join(process.cwd(), './dist'),
+    publicPath: webpackConfig.output.publicPath,
+    noInfo: true,
+    inline: true,
+    stats: {
+      colors: true
     },
-    files: [path.join(process.cwd(), './src/client.js')]
-  };
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    }
+  });
 
-  browserSyncServer.init(browserSyncServerOpts, (err) => {
+  server.listen(port, 'localhost', (err) => {
     if (err) throw err;
+
+    console.log(colors.blue(`webpack dev server is running on http://localhost:${port}`));
   });
 });

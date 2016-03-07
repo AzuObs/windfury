@@ -1,5 +1,5 @@
 import React from 'react';
-import {renderToString} from 'react-dom/server';
+import {renderToStaticMarkup} from 'react-dom/server';
 import {Router, RouterContext, match, browserHistory, createMemoryHistory} from 'react-router';
 import Routes from './Routes';
 
@@ -8,6 +8,6 @@ export default function(locals, callback) {
   const location = history.createLocation(locals.path);
 
   match({routes: Routes, location}, (error, redirectLocation, renderProps) => {
-    callback(null, `<!DOCTYPE html>${renderToString(<RouterContext {...renderProps} />)}`);
+    callback(null, `<!DOCTYPE html>${renderToStaticMarkup(<RouterContext {...renderProps} />)}`);
   });
 }

@@ -29,9 +29,7 @@ export default function(done) {
       documentPath = file.replace(new RegExp(path.join(process.cwd(), './src/documents')), '');
       documentPath = `${path.dirname(documentPath)}/`;
 
-      if (paths.indexOf(documentPath) === -1) {
-        paths.push(documentPath);
-      }
+      if (paths.indexOf(documentPath) === -1) paths.push(documentPath);
     });
 
     webpackConfig = {
@@ -41,7 +39,7 @@ export default function(done) {
         async: [path.join(process.cwd(), './src/async.js')]
       },
       output: {
-        path: path.join(process.cwd(), 'dist'),
+        path: path.join(process.cwd(), './dist'),
         filename: '[name]-[hash].js',
         libraryTarget: 'umd'
       },
