@@ -6,6 +6,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import AssetsPlugin from 'assets-webpack-plugin';
 import recursive from 'recursive-readdir';
 import path from 'path';
+import autoprefixer from 'autoprefixer';
 
 const babelrc = fs.readFileSync(path.join(process.cwd(), '.babelrc'));
 
@@ -88,16 +89,19 @@ export default function(done) {
             NODE_ENV: JSON.stringify('production')
           }
         }),
-        new StaticSiteGeneratorPlugin('main', paths),
         new CleanWebpackPlugin([path.join(process.cwd(), './dist')], {
           root: process.cwd()
         }),
         new ExtractTextPlugin('main-[chunkhash].css'),
-        new AssetsPlugin()
+        new AssetsPlugin(),
+        new StaticSiteGeneratorPlugin('main', paths)
       ],
       resolve: {
         modulesDirectories: ['src', 'node_modules'],
         extensions: ['', '.js', '.json']
+      },
+      postcss: function() {
+        return [autoprefixer];
       }
     };
 

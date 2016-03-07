@@ -11,6 +11,7 @@ import AssetsPlugin from 'assets-webpack-plugin';
 import path from 'path';
 import recursive from 'recursive-readdir';
 import StaticSiteGeneratorPlugin from 'static-site-generator-webpack-plugin';
+import autoprefixer from 'autoprefixer';
 
 const babelrc = fs.readFileSync(path.join(process.cwd(), '.babelrc'));
 
@@ -74,10 +75,21 @@ export default function(done) {
             query: babelLoaderQuery
           },
           {
+            test: /\.css$/,
+            loaders: [
+              'style',
+              'css?modules&importLoaders=2&sourceMap&localIdentName=[local]',
+              'postcss',
+              'resolve-url'
+            ]
+          },
+          {
             test: /\.scss$/,
             loaders: [
               'style',
               'css?modules&importLoaders=2&sourceMap&localIdentName=[local]',
+              'postcss',
+              'resolve-url',
               'sass?outputStyle=expanded&sourceMap'
             ]
           },
@@ -116,6 +128,9 @@ export default function(done) {
       resolve: {
         modulesDirectories: ['src', 'node_modules'],
         extensions: ['', '.js', '.json']
+      },
+      postcss: function() {
+        return [autoprefixer];
       }
     };
 
