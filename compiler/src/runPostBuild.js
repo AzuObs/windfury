@@ -1,6 +1,7 @@
 import recursive from 'recursive-readdir';
 import path from 'path';
 import fs from 'fs';
+import colors from 'colors/safe';
 
 export default function(entry) {
   const assets = JSON.parse(fs.readFileSync(path.join(process.cwd(), './webpack-assets.json')));
@@ -25,5 +26,7 @@ export default function(entry) {
 
       fs.writeFileSync(file, content);
     });
+
+    console.log(colors.green('post build done'));
   });
 }
