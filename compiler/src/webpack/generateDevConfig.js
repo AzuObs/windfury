@@ -1,6 +1,9 @@
 import {
   IgnorePlugin,
-  DefinePlugin
+  DefinePlugin,
+  HotModuleReplacementPlugin,
+  NoErrorsPlugin,
+  optimize
 } from 'webpack';
 import fs from 'fs';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
@@ -19,6 +22,15 @@ try {
   console.error('ERROR: Error parsing .babelrc.');
   console.error(error);
 }
+
+babelLoaderQuery.plugins = babelLoaderQuery.plugins || [];
+babelLoaderQuery.plugins.push(['react-transform', {
+  transforms: [{
+    transform: 'react-transform-hmr',
+    imports: ['react'],
+    locals: ['module']
+  }]
+}]);
 
 export default function(done) {
   let webpackConfig;
@@ -40,18 +52,14 @@ export default function(done) {
       devtool: 'inline-source-map',
       context: path.join(process.cwd(), './src'),
       entry: {
-        main: [
-          'webpack-dev-server/client?http://localhost:3000/',
-          path.join(process.cwd(), './src/client.js')
-        ],
-        async: [path.join(process.cwd(), './src/async.js')],
-        static: [path.join(process.cwd(), './src/static.js')]
+        main: ['webpack-hot-middleware/client', path.join(process.cwd(), './src/index.js')],
+        async: ['webpack-hot-middleware/client', path.join(process.cwd(), './src/async.js')]
       },
       output: {
         path: path.join(process.cwd(), './dist'),
         filename: '[name].js',
         libraryTarget: 'umd',
-        publicPath: 'http://localhost:3000/'
+        publicPath: '/'
       },
       module: {
         loaders: [
@@ -74,15 +82,15 @@ export default function(done) {
           },
           {
             test: /\.(woff|woff2|ttf)$/,
-            loader: 'url?limit=10000&name=[path][name]-[hash].[ext]'
+            loader: 'url?limit=10000&name=[path][name].[ext]'
           },
           {
             test: /\.eot$/,
-            loader: 'file?name=[path][name]-[hash].[ext]'
+            loader: 'file?name=[path][name].[ext]'
           },
           {
             test: /\.(jpg|png|gif|svg)$/,
-            loader: 'url?limit=10000&name=[path][name]-[hash].[ext]'
+            loader: 'url?limit=10000&name=[path][name].[ext]'
           },
           {
             test: /\.json$/,
@@ -91,7 +99,6 @@ export default function(done) {
         ]
       },
       progress: true,
-      watch: true,
       plugins: [
         new IgnorePlugin(/webpack-stats\.json$/),
         new DefinePlugin({
@@ -101,7 +108,10 @@ export default function(done) {
         }),
         new ExtractTextPlugin('main.css'),
         new AssetsPlugin(),
-        new StaticSiteGeneratorPlugin('static', paths)
+        new optimize.OccurenceOrderPlugin(),
+        new HotModuleReplacementPlugin(),
+        new NoErrorsPlugin(),
+        new StaticSiteGeneratorPlugin('main', paths)
       ],
       resolve: {
         modulesDirectories: ['src', 'node_modules'],

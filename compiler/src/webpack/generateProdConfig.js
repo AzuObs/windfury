@@ -81,7 +81,6 @@ export default function(done) {
         ]
       },
       progress: true,
-      watch: true,
       plugins: [
         new webpack.IgnorePlugin(/webpack-stats\.json$/),
         new webpack.DefinePlugin({

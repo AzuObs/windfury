@@ -2,6 +2,7 @@ import React from 'react';
 import {IndexRoute, Route} from 'react-router';
 import Root from './Root';
 import {
+  Website,
   Home,
   About,
   Support,
@@ -10,7 +11,7 @@ import {
 } from './documents';
 
 export default (
-  <Route path="/" component={Root}>
+  <Route path="/" component={Website}>
     <IndexRoute component={Home} />
     <Route path="/about" component={About} />
     <Route path="/support" component={Support} />

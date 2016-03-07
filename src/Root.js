@@ -1,20 +1,26 @@
 import React from 'react';
+import {renderToString} from 'react-dom/server';
 
 import './main.scss';
 
 export default React.createClass({
   render: function() {
+    const {component, assets} = this.props;
+    const content = component ? renderToString(component) : '';
+
+    console.log(assets);
+
     return (
       <html>
         <head>
           <meta charSet="utf-8" />
           <title>React Static Generator</title>
-          <link rel="stylesheet" href="/main.css" />
-          <script async defer src="/async.js"></script>
+          {/*<link rel="stylesheet" href="/main.css" />*/}
+          <script async defer src={assets.async}></script>
         </head>
         <body>
-          {this.props.children}
-          <script src="/main.js"></script>
+          <div id="website" dangerouslySetInnerHTML={{__html: content}} />
+          <script src={assets.main}></script>
         </body>
       </html>
     );

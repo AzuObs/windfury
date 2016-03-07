@@ -1,3 +1,3 @@
-# Home 8
+# Home 12
 
-[Link to about](/about/)
+[Link to about 2](/about/)
