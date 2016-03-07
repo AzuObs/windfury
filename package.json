@@ -1,11 +1,12 @@
 {
-  "name": "react-static-generator",
+  "name": "windfury",
   "version": "1.0.0-alpha.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha",
     "dev": "./node_modules/.bin/babel-node ./compiler/lib/watch",
+    "build": "./node_modules/.bin/babel-node ./compiler/lib/build",
     "watch-compiler": "./node_modules/.bin/babel ./compiler/src -d ./compiler/lib --watch"
   },
   "author": "Nicolas Cava <n.cava@mapleinside.com>",
@@ -14,31 +15,38 @@
     "assets-webpack-plugin": "^3.3.0",
     "babel-cli": "^6.6.5",
     "babel-loader": "^6.2.4",
+    "babel-polyfill": "^6.6.1",
     "babel-plugin-add-module-exports": "^0.1.2",
+    "babel-plugin-react-transform": "^2.0.2",
     "babel-preset-es2015": "^6.6.0",
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.5.0",
+    "browser-sync": "^2.11.1",
     "clean-webpack-plugin": "^0.1.8",
     "colors": "^1.1.2",
     "css-loader": "^0.23.1",
+    "express": "^4.13.4",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
     "html-loader": "^0.4.3",
+    "http": "0.0.0",
     "image-webpack-loader": "^1.6.3",
     "json-loader": "^0.5.4",
     "markdown-loader": "^0.1.7",
     "mocha": "^2.4.5",
     "node-sass": "^3.4.2",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "react-router": "^2.0.0",
+    "react-tap-event-plugin": "^0.2.2",
+    "react-transform-hmr": "^1.0.4",
     "recursive-readdir": "^1.3.0",
     "sass-loader": "^3.1.2",
     "static-site-generator-webpack-plugin": "^2.0.1",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.7",
-    "webpack": "^1.12.14"
-  },
-  "dependencies": {
-    "react": "^0.14.7",
-    "react-dom": "^0.14.7",
-    "react-router": "^2.0.0"
+    "webpack": "^1.12.14",
+    "webpack-dev-middleware": "^1.5.1",
+    "webpack-hot-middleware": "^2.9.1"
   }
 }

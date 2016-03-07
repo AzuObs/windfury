@@ -1,19 +1,13 @@
-import {
-  HotModuleReplacementPlugin,
-  IgnorePlugin,
-  DefinePlugin,
-  optimize,
-  NoErrorsPlugin
-} from 'webpack';
+import webpack from 'webpack';
 import fs from 'fs';
+import StaticSiteGeneratorPlugin from 'static-site-generator-webpack-plugin';
+import CleanWebpackPlugin from 'clean-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import AssetsPlugin from 'assets-webpack-plugin';
-import path from 'path';
 import recursive from 'recursive-readdir';
-import StaticSiteGeneratorPlugin from 'static-site-generator-webpack-plugin';
+import path from 'path';
 
 const babelrc = fs.readFileSync(path.join(process.cwd(), '.babelrc'));
-const {OccurenceOrderPlugin} = optimize;
 
 let babelLoaderQuery = {};
 
@@ -23,15 +17,6 @@ try {
   console.error('ERROR: Error parsing .babelrc.');
   console.error(error);
 }
-
-babelLoaderQuery.plugins = babelLoaderQuery.plugins || [];
-babelLoaderQuery.plugins.push(['react-transform', {
-  transforms: [{
-    transform: 'react-transform-hmr',
-    imports: ['react'],
-    locals: ['module']
-  }]
-}]);
 
 export default function(done) {
   let webpackConfig;
@@ -50,24 +35,15 @@ export default function(done) {
     });
 
     webpackConfig = {
-      devtool: 'inline-source-map',
       context: path.join(process.cwd(), './src'),
       entry: {
-        main: [
-          'webpack-hot-middleware/client',
-          path.join(process.cwd(), './src/client.js')
-        ],
-        async: [
-          'webpack-hot-middleware/client',
-          path.join(process.cwd(), './src/async.js')
-        ],
-        static: [path.join(process.cwd(), './src/static.js')]
+        main: [path.join(process.cwd(), './src/static.js')],
+        async: [path.join(process.cwd(), './src/async.js')]
       },
       output: {
-        path: path.join(process.cwd(), './dist'),
-        filename: '[name].js',
-        libraryTarget: 'umd',
-        publicPath: ''
+        path: path.join(process.cwd(), 'dist'),
+        filename: '[name]-[hash].js',
+        libraryTarget: 'umd'
       },
       module: {
         loaders: [
@@ -109,18 +85,18 @@ export default function(done) {
       progress: true,
       watch: true,
       plugins: [
-        new OccurenceOrderPlugin(),
-        new HotModuleReplacementPlugin(),
-        new NoErrorsPlugin(),
-        new IgnorePlugin(/webpack-stats\.json$/),
-        new DefinePlugin({
+        new webpack.IgnorePlugin(/webpack-stats\.json$/),
+        new webpack.DefinePlugin({
           'process.env': {
-            NODE_ENV: JSON.stringify('development')
+            NODE_ENV: JSON.stringify('production')
           }
         }),
-        new ExtractTextPlugin('main.css'),
-        new AssetsPlugin(),
-        new StaticSiteGeneratorPlugin('static', paths)
+        new StaticSiteGeneratorPlugin('main', paths),
+        new CleanWebpackPlugin([path.join(process.cwd(), './dist')], {
+          root: process.cwd()
+        }),
+        new ExtractTextPlugin('main-[chunkhash].css'),
+        new AssetsPlugin()
       ],
       resolve: {
         modulesDirectories: ['src', 'node_modules'],

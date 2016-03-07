@@ -1,4 +1,5 @@
 import React from 'react';
+
 import './main.scss';
 
 export default React.createClass({
@@ -11,12 +12,10 @@ export default React.createClass({
           <link rel="stylesheet" href="/main.css" />
           <script async defer src="/async.js"></script>
         </head>
-      <body>
-        <div id="website">
+        <body>
           {this.props.children}
-        </div>
-        <script src="/main.js"></script>
-      </body>
+          <script src="/main.js"></script>
+        </body>
       </html>
     );
   }
