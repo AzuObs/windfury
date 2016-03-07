@@ -75,10 +75,11 @@ export default function(done) {
           },
           {
             test: /\.scss$/,
-            loader: ExtractTextPlugin.extract(
+            loaders: [
               'style',
-              ['css?modules&importLoaders=2&sourceMap&localIdentName=[local]', 'sass?outputStyle=expanded&sourceMap']
-            )
+              'css?modules&importLoaders=2&sourceMap&localIdentName=[local]',
+              'sass?outputStyle=expanded&sourceMap'
+            ]
           },
           {
             test: /\.(woff|woff2|ttf)$/,
@@ -106,7 +107,6 @@ export default function(done) {
             NODE_ENV: JSON.stringify('development')
           }
         }),
-        new ExtractTextPlugin('main.css'),
         new AssetsPlugin(),
         new optimize.OccurenceOrderPlugin(),
         new HotModuleReplacementPlugin(),

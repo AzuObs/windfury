@@ -6,6 +6,7 @@ import Routes from './Routes';
 import Root from 'Root';
 
 if (typeof document !== 'undefined') {
+  require('./main.scss');
   render(<Router history={browserHistory} routes={Routes} />, document.getElementById('website'));
 }
 
