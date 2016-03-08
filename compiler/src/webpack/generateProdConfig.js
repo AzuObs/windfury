@@ -3,7 +3,6 @@ import fs from 'fs';
 import StaticSiteGeneratorPlugin from 'static-site-generator-webpack-plugin';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import AssetsPlugin from 'assets-webpack-plugin';
 import recursive from 'recursive-readdir';
 import path from 'path';
 import autoprefixer from 'autoprefixer';
@@ -126,7 +125,6 @@ export default function(done) {
         new ExtractTextPlugin('main-[chunkhash].css', {
           allChunks: true
         }),
-        new AssetsPlugin(),
         new StaticSiteGeneratorPlugin('main', paths),
         new optimize.UglifyJsPlugin({
           compress: {

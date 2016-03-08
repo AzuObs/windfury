@@ -14,8 +14,20 @@ if (typeof document !== 'undefined') {
 export default function(locals, callback) {
   const history = createMemoryHistory();
   const location = history.createLocation(locals.path);
-  //const assets = locals.webpackStats.toJson().assetsByChunkName;
-  const assets = locals.assets;
+  const webpackStatsAssets = locals.webpackStats.toJson().assetsByChunkName;
+
+  let assets = {
+    scripts: {},
+    styles: {}
+  };
+
+  webpackStatsAssets.async.constructor.name === 'Array' ?
+    assets.scripts.async = `/${webpackStatsAssets.async[0]}` :
+    assets.scripts.async = `/${webpackStatsAssets.async}`;
+  webpackStatsAssets.main.constructor.name === 'Array' ?
+    assets.scripts.main = `/${webpackStatsAssets.main[0]}` :
+    assets.scripts.main = `/${webpackStatsAssets.main}`;
+  assets.styles.main = webpackStatsAssets.main.constructor.name === 'Array' && `/${webpackStatsAssets.main[1]}`;
 
   match({routes: Routes, location}, (error, redirectLocation, renderProps) => {
     callback(null, `<!DOCTYPE html>${renderToString(
@@ -23,3 +35,4 @@ export default function(locals, callback) {
     )}`);
   });
 }
+``

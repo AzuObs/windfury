@@ -20,6 +20,6 @@ generateProdConfig(function(webpackConfig) {
     console.log(colors.green('webpack build done'));
 
     compressedFiles = await compress();
-    await deploy(compressedFiles);
+    deploy(compressedFiles);
   });
 });
