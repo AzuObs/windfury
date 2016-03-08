@@ -4,7 +4,7 @@
   "description": "Shamanize your next static website combining React and BrowserSync/Webpack tools.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha",
+    "test": "./node_modules/.bin/eslint ./src && ./node_modules/.bin/mocha",
     "dev": "./node_modules/.bin/babel ./src -d ./lib --watch",
     "build": "./node_modules/.bin/babel ./src -d ./lib",
     "prepublish": "npm run build"
@@ -50,5 +50,9 @@
     "webpack": "^1.12.14",
     "webpack-dev-middleware": "^1.5.1",
     "webpack-hot-middleware": "^2.9.1"
+  },
+  "devDependencies": {
+    "eslint": "^2.3.0",
+    "eslint-plugin-react": "^4.2.0"
   }
 }
