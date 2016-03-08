@@ -1,4 +1,14 @@
+![Windfury Logo](http://wow.zamimg.com/images/wow/icons/large/spell_shaman_unleashweapon_wind.jpg)
+
 # Windfury
+
+[![Codeship Status for mapleinside/windfury](https://codeship.com/projects/8c24abd0-c600-0133-5e12-4e8753dd3f97/status?branch=master)](https://codeship.com/projects/138622)
+
+> Shamanize your next static website combining React and BrowserSync/Webpack tools.
+
+## What is Windfury?
+
+Windfury is an advanced static website compiler.
 
 ## License
 

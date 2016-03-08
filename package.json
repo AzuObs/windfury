@@ -1,7 +1,7 @@
 {
   "name": "windfury",
-  "version": "1.0.0-alpha.3",
-  "description": "",
+  "version": "1.0.0-alpha.4",
+  "description": "Shamanize your next static website combining React and BrowserSync/Webpack tools.",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha",
@@ -10,7 +10,7 @@
     "prepublish": "npm run build"
   },
   "bin": {
-    "windfury": "./bin/windfury"
+    "windfury": "./bin/windfury.js"
   },
   "author": "Nicolas Cava <n.cava@mapleinside.com>",
   "license": "MIT",
