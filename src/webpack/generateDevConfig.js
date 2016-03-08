@@ -7,7 +7,6 @@ import {
 } from 'webpack';
 import fs from 'fs';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import AssetsPlugin from 'assets-webpack-plugin';
 import path from 'path';
 import recursive from 'recursive-readdir';
 import StaticSiteGeneratorPlugin from 'static-site-generator-webpack-plugin';
@@ -120,7 +119,6 @@ export default function(done) {
           },
           __STATIC__: false
         }),
-        new AssetsPlugin(),
         new optimize.OccurenceOrderPlugin(),
         new HotModuleReplacementPlugin(),
         new NoErrorsPlugin(),
