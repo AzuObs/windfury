@@ -123,7 +123,9 @@ export default function(done) {
         new CleanWebpackPlugin([distDir], {
           root: process.cwd()
         }),
-        new ExtractTextPlugin('main-[chunkhash].css'),
+        new ExtractTextPlugin('main-[chunkhash].css', {
+          allChunks: true
+        }),
         new AssetsPlugin(),
         new StaticSiteGeneratorPlugin('main', paths),
         new optimize.UglifyJsPlugin({

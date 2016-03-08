@@ -6,6 +6,8 @@ export default React.createClass({
     const {component, assets} = this.props;
     const content = component ? renderToString(component) : '';
 
+    console.log(assets);
+
     return (
       <html>
         <head>

@@ -14,10 +14,12 @@ if (typeof document !== 'undefined') {
 export default function(locals, callback) {
   const history = createMemoryHistory();
   const location = history.createLocation(locals.path);
+  //const assets = locals.webpackStats.toJson().assetsByChunkName;
+  const assets = locals.assets;
 
   match({routes: Routes, location}, (error, redirectLocation, renderProps) => {
     callback(null, `<!DOCTYPE html>${renderToString(
-      <Root assets={locals.assets} component={<RouterContext {...renderProps} />} />
+      <Root assets={assets} component={<RouterContext {...renderProps} />} />
     )}`);
   });
 }
