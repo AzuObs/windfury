@@ -16,6 +16,5 @@ generateProdConfig(function(webpackConfig) {
     if (jsonStats.warnings.length > 0) console.log(colors.yellow(jsonStats.warnings));
 
     console.log(colors.green('webpack build done'));
-    runPostBuild(webpackConfig.entry);
   });
 });

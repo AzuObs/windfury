@@ -33,5 +33,5 @@ generateDevConfig(function(webpackConfig) {
     ]
   };
 
-  browserSyncServer.init(browserSyncServerOpts);
+  browserSyncServer.init(browserSyncServerOpts, () => console.log(colors.green('browsersync server running')));
 });

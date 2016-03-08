@@ -12,8 +12,11 @@ import path from 'path';
 import recursive from 'recursive-readdir';
 import StaticSiteGeneratorPlugin from 'static-site-generator-webpack-plugin';
 import autoprefixer from 'autoprefixer';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
-const babelrc = fs.readFileSync(path.join(process.cwd(), '.babelrc'));
+const babelrc = fs.readFileSync(path.join(process.cwd(), './.babelrc'));
+const documentsDir = path.join(process.cwd(), './src/documents');
+const distDir = path.join(process.cwd(), './dist');
 
 let babelLoaderQuery = {};
 
@@ -37,16 +40,14 @@ export default function(done) {
   let webpackConfig;
   let paths = ['/'];
 
-  recursive(path.join(process.cwd(), './src/documents'), ['src/*'], (err, files) => {
+  recursive(documentsDir, ['src/*'], (err, files) => {
     let documentPath;
 
     files.map((file) => {
-      documentPath = file.replace(new RegExp(path.join(process.cwd(), './src/documents')), '');
+      documentPath = file.replace(new RegExp(documentsDir), '');
       documentPath = `${path.dirname(documentPath)}/`;
 
-      if (paths.indexOf(documentPath) === -1) {
-        paths.push(documentPath);
-      }
+      if (paths.indexOf(documentPath) === -1) paths.push(documentPath);
     });
 
     webpackConfig = {
@@ -57,7 +58,7 @@ export default function(done) {
         async: ['webpack-hot-middleware/client', path.join(process.cwd(), './src/async.js')]
       },
       output: {
-        path: path.join(process.cwd(), './dist'),
+        path: distDir,
         filename: '[name].js',
         libraryTarget: 'umd',
         publicPath: '/'
@@ -70,9 +71,8 @@ export default function(done) {
           },
           {
             test: /\.js$/,
-            loader: 'babel',
-            include: path.join(process.cwd(), './src'),
-            query: babelLoaderQuery
+            loader: `babel?${JSON.stringify(babelLoaderQuery)}`,
+            include: path.join(process.cwd(), './src')
           },
           {
             test: /\.css$/,
@@ -117,13 +117,28 @@ export default function(done) {
         new DefinePlugin({
           'process.env': {
             NODE_ENV: JSON.stringify('development')
-          }
+          },
+          __STATIC__: false
         }),
         new AssetsPlugin(),
         new optimize.OccurenceOrderPlugin(),
         new HotModuleReplacementPlugin(),
         new NoErrorsPlugin(),
-        new StaticSiteGeneratorPlugin('main', paths)
+        new StaticSiteGeneratorPlugin('main', paths),
+        new CopyWebpackPlugin([
+          {
+            from: path.join(process.cwd(), './src/robots.txt'),
+            to: path.join(process.cwd(), './dist/robots.txt')
+          },
+          {
+            from: path.join(process.cwd(), './src/sitemap.xml'),
+            to: path.join(process.cwd(), './dist/sitemap.xml')
+          },
+          {
+            from: path.join(process.cwd(), './src/favicon.ico'),
+            to: path.join(process.cwd(), './dist/favicon.ico')
+          }
+        ])
       ],
       resolve: {
         modulesDirectories: ['src', 'node_modules'],

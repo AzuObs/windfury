@@ -5,7 +5,7 @@ import {render} from 'react-dom';
 import Routes from './Routes';
 import Root from 'Root';
 
-if (typeof window !== 'undefined') require('./style.scss');
+if (typeof window !== 'undefined' || __STATIC__) require('./style.scss');
 
 if (typeof document !== 'undefined') {
   render(<Router history={browserHistory} routes={Routes} />, document.getElementById('website'));
