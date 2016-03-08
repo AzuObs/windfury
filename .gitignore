@@ -5,3 +5,4 @@ compiler/lib/
 .DS_Store
 *.log
 webpack-assets.json
+aws.json
