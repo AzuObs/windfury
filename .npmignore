@@ -1,5 +1,8 @@
 .idea/
 node_modules/
-lib/
+src/
+.babelrc
+.gitignore
+README.md
 .DS_Store
 *.log
