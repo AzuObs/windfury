@@ -55,7 +55,7 @@
     "no-unused-labels": 2,
     "no-useless-call": 0,
     "no-void": 0,
-    "no-warning-comments": [0, {"terms": ["todo", "fixme", "xxx"], "location": "start" }],
+    "no-warning-comments": [0, {"terms": ["todo", "fixme", "xxx"], "location": "start"}],
     "no-with": 2,
     "radix": 2,
     "vars-on-top": 2,
