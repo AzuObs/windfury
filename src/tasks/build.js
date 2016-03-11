@@ -14,8 +14,8 @@ export default function() {
       const jsonStats = stats.toJson();
 
       if (err) throw err;
-      if (jsonStats.errors.length > 0) console.log(jsonStats.errors);
-      if (jsonStats.warnings.length > 0) console.log(jsonStats.warnings);
+      if (jsonStats.errors.length > 0) debug(jsonStats.errors);
+      if (jsonStats.warnings.length > 0) debug(jsonStats.warnings);
 
       debug('webpack build done');
 
