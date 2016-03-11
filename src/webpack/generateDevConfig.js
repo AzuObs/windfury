@@ -13,33 +13,31 @@ import autoprefixer from 'autoprefixer';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import debugLib from 'debug';
 
-const debug = debugLib('generateDevConfig');
-const babelrc = fs.readFileSync(path.join(process.cwd(), './.babelrc'));
-const documentsDir = path.join(process.cwd(), './src/documents');
-const distDir = path.join(process.cwd(), './dist');
-
-let babelLoaderQuery = {};
-
-try {
-  babelLoaderQuery = JSON.parse(babelrc);
-} catch (error) {
-  debug('ERROR: Error parsing .babelrc.');
-  debug(error);
-}
-
-babelLoaderQuery.plugins = babelLoaderQuery.plugins || [];
-babelLoaderQuery.plugins.push(['react-transform', {
-  transforms: [{
-    transform: 'react-transform-hmr',
-    imports: ['react'],
-    locals: ['module']
-  }]
-}]);
-
 export default function(done) {
+  const debug = debugLib('generateDevConfig');
+  const babelrc = fs.readFileSync(path.join(process.cwd(), './.babelrc'));
+  const documentsDir = path.join(process.cwd(), './src/documents');
+  const distDir = path.join(process.cwd(), './dist');
   const paths = ['/'];
 
+  let babelLoaderQuery = {};
   let webpackConfig = {};
+
+  try {
+    babelLoaderQuery = JSON.parse(babelrc);
+  } catch (error) {
+    debug('ERROR: Error parsing .babelrc.');
+    debug(error);
+  }
+
+  babelLoaderQuery.plugins = babelLoaderQuery.plugins || [];
+  babelLoaderQuery.plugins.push(['react-transform', {
+    transforms: [{
+      transform: 'react-transform-hmr',
+      imports: ['react'],
+      locals: ['module']
+    }]
+  }]);
 
   recursive(documentsDir, ['src/*'], (err, files) => {
     let documentPath;

@@ -9,34 +9,32 @@ import autoprefixer from 'autoprefixer';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import debugLib from 'debug';
 
-const debug = debugLib('generateProdConfig');
-const babelrc = fs.readFileSync(path.join(process.cwd(), './.babelrc'));
-const cssLoaderQuery = {
-  modules: true,
-  importLoaders: 2,
-  localIdentName: '[local]',
-  discardComments: {
-    removeAll: true
-  },
-  reduceTransforms: false,
-  zindex: false
-};
-const documentsDir = path.join(process.cwd(), './src/documents');
-const distDir = path.join(process.cwd(), './dist');
-
-let babelLoaderQuery = {};
-
-try {
-  babelLoaderQuery = JSON.parse(babelrc);
-} catch (error) {
-  debug('ERROR: Error parsing .babelrc.');
-  debug(error);
-}
-
 export default function(done) {
+  const debug = debugLib('generateProdConfig');
+  const babelrc = fs.readFileSync(path.join(process.cwd(), './.babelrc'));
+  const cssLoaderQuery = {
+    modules: true,
+    importLoaders: 2,
+    localIdentName: '[local]',
+    discardComments: {
+      removeAll: true
+    },
+    reduceTransforms: false,
+    zindex: false
+  };
+  const documentsDir = path.join(process.cwd(), './src/documents');
+  const distDir = path.join(process.cwd(), './dist');
   const paths = ['/'];
 
+  let babelLoaderQuery = {};
   let webpackConfig = {};
+
+  try {
+    babelLoaderQuery = JSON.parse(babelrc);
+  } catch (error) {
+    debug('ERROR: Error parsing .babelrc.');
+    debug(error);
+  }
 
   recursive(documentsDir, ['src/*'], (err, files) => {
     let documentPath;
