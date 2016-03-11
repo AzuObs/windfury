@@ -1,16 +1,17 @@
 import webpack from 'webpack';
-import generateDevConfig from '../webpack/generateDevConfig';
-import colors from 'colors';
 import path from 'path';
 import browserSync from 'browser-sync';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import hygienistMiddleware from 'hygienist-middleware';
+import debugLib from 'debug';
+import generateDevConfig from '../webpack/generateDevConfig';
 
 export default function() {
+  const debug = debugLib('watch');
   const browserSyncServer = browserSync.create();
 
-  generateDevConfig(function(webpackConfig) {
+  generateDevConfig((webpackConfig) => {
     const compiler = webpack(webpackConfig);
     const browserSyncServerOpts = {
       open: false,
@@ -34,6 +35,6 @@ export default function() {
       ]
     };
 
-    browserSyncServer.init(browserSyncServerOpts, () => console.log(colors.green('browsersync server running')));
+    browserSyncServer.init(browserSyncServerOpts, () => debug('browsersync server running'));
   });
 }

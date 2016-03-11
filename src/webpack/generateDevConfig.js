@@ -6,13 +6,14 @@ import {
   optimize
 } from 'webpack';
 import fs from 'fs';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import path from 'path';
 import recursive from 'recursive-readdir';
 import StaticSiteGeneratorPlugin from 'static-site-generator-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import debugLib from 'debug';
 
+const debug = debugLib('generateDevConfig');
 const babelrc = fs.readFileSync(path.join(process.cwd(), './.babelrc'));
 const documentsDir = path.join(process.cwd(), './src/documents');
 const distDir = path.join(process.cwd(), './dist');
@@ -22,8 +23,8 @@ let babelLoaderQuery = {};
 try {
   babelLoaderQuery = JSON.parse(babelrc);
 } catch (error) {
-  console.error('ERROR: Error parsing .babelrc.');
-  console.error(error);
+  debug('ERROR: Error parsing .babelrc.');
+  debug(error);
 }
 
 babelLoaderQuery.plugins = babelLoaderQuery.plugins || [];
@@ -36,8 +37,9 @@ babelLoaderQuery.plugins.push(['react-transform', {
 }]);
 
 export default function(done) {
-  let webpackConfig;
-  let paths = ['/'];
+  const paths = ['/'];
+
+  let webpackConfig = {};
 
   recursive(documentsDir, ['src/*'], (err, files) => {
     let documentPath;
@@ -47,6 +49,8 @@ export default function(done) {
       documentPath = `${path.dirname(documentPath)}/`;
 
       if (paths.indexOf(documentPath) === -1) paths.push(documentPath);
+
+      return file;
     });
 
     webpackConfig = {
@@ -142,7 +146,7 @@ export default function(done) {
         modulesDirectories: ['src', 'node_modules'],
         extensions: ['', '.js', '.json']
       },
-      postcss: function() {
+      postcss() {
         return [autoprefixer];
       }
     };

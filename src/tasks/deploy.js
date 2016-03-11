@@ -2,9 +2,11 @@ import s3 from 's3';
 import path from 'path';
 import fs from 'fs';
 import recursive from 'recursive-readdir';
-import colors from 'colors';
+import debugLib from 'debug';
 
 export default async function(compressedFiles) {
+  const debug = debugLib('deploy');
+
   let awsCredentials = {};
 
   // To support multi-apps hosting in the same server, an app can define a aws-credentials.json to set
@@ -13,7 +15,7 @@ export default async function(compressedFiles) {
   try {
     awsCredentials = JSON.parse(fs.readFileSync(path.join(process.cwd(), './aws.json')));
   } catch (exception) {
-    console.info('aws.json file not found. Using environment variables instead.');
+    debug('aws.json file not found. Using environment variables instead.');
 
     awsCredentials.accessKeyId = process.env.AWS_ACCESS_KEY_ID;
     awsCredentials.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
@@ -41,7 +43,7 @@ export default async function(compressedFiles) {
     };
 
     files.map((file) => {
-      const relativeFile = file.replace(process.cwd() + '/dist/', '');
+      const relativeFile = file.replace(`${process.cwd()}/dist/`, '');
 
       params.localFile = path.join(process.cwd(), './dist', relativeFile);
       params.s3Params.Key = relativeFile;
@@ -57,10 +59,11 @@ export default async function(compressedFiles) {
       }
 
       client.uploadFile(params);
-
-      console.log(colors.green(`${path.basename(file)} uploaded`));
-
       params.s3Params = JSON.parse(JSON.stringify(defaultS3Params));
+
+      debug(`${path.basename(file)} uploaded`);
+
+      return file;
     });
   });
 }

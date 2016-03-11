@@ -1,26 +1,26 @@
 import webpack from 'webpack';
+import debugLib from 'debug';
 import generateProdConfig from '../webpack/generateProdConfig';
 import compress from './compress';
 import deploy from './deploy';
-import colors from 'colors/safe';
-import path from 'path';
 
 export default function() {
-  generateProdConfig(function(webpackConfig) {
+  const debug = debugLib('build');
+
+  generateProdConfig((webpackConfig) => {
     const compiler = webpack(webpackConfig);
 
-    compiler.run(async function(err, stats) {
-      let jsonStats = stats.toJson();
-      let compressedFiles;
+    compiler.run(async (err, stats) => {
+      const jsonStats = stats.toJson();
 
       if (err) throw err;
+      if (jsonStats.errors.length > 0) debug(jsonStats.errors);
+      if (jsonStats.warnings.length > 0) debug(jsonStats.warnings);
 
-      if (jsonStats.errors.length > 0) console.log(colors.red(jsonStats.errors));
-      if (jsonStats.warnings.length > 0) console.log(colors.yellow(jsonStats.warnings));
+      debug('webpack build done');
 
-      console.log(colors.green('webpack build done'));
+      const compressedFiles = await compress();
 
-      compressedFiles = await compress();
       deploy(compressedFiles);
     });
   });
