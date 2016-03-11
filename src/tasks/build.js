@@ -10,7 +10,13 @@ export default function() {
   generateProdConfig((webpackConfig) => {
     const compiler = webpack(webpackConfig);
 
-    compiler.run(async () => {
+    compiler.run(async (err, stats) => {
+      const jsonStats = stats.toJson();
+
+      if (err) throw err;
+      if (jsonStats.errors.length > 0) console.log(jsonStats.errors);
+      if (jsonStats.warnings.length > 0) console.log(jsonStats.warnings);
+
       debug('webpack build done');
 
       const compressedFiles = await compress();
