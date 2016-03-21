@@ -35,6 +35,6 @@ export default function() {
       ]
     };
 
-    browserSyncServer.init(browserSyncServerOpts, () => debug('browsersync server running'));
+    return browserSyncServer.init(browserSyncServerOpts, () => debug('browsersync server running'));
   });
 }

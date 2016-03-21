@@ -9,7 +9,7 @@ import autoprefixer from 'autoprefixer';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import debugLib from 'debug';
 
-export default function(done) {
+export default function({locale}, done) {
   const debug = debugLib('generateProdConfig');
   const babelrc = fs.readFileSync(path.join(process.cwd(), './.babelrc'));
   const cssLoaderQuery = {
@@ -23,7 +23,7 @@ export default function(done) {
     zindex: false
   };
   const documentsDir = path.join(process.cwd(), './src/documents');
-  const distDir = path.join(process.cwd(), './dist');
+  const distDir = path.join(process.cwd(), './dist', `./${locale}`);
   const paths = ['/'];
 
   let babelLoaderQuery = {};
@@ -120,7 +120,8 @@ export default function(done) {
           'process.env': {
             NODE_ENV: JSON.stringify('production')
           },
-          __STATIC__: true
+          __STATIC__: true,
+          __LOCALE__: JSON.stringify(locale)
         }),
         new CleanWebpackPlugin([distDir], {
           root: process.cwd()
@@ -137,15 +138,15 @@ export default function(done) {
         new CopyWebpackPlugin([
           {
             from: path.join(process.cwd(), './src/robots.txt'),
-            to: path.join(process.cwd(), './dist/robots.txt')
+            to: './robots.txt'
           },
           {
             from: path.join(process.cwd(), './src/sitemap.xml'),
-            to: path.join(process.cwd(), './dist/sitemap.xml')
+            to: './sitemap.xml'
           },
           {
             from: path.join(process.cwd(), './src/favicon.ico'),
-            to: path.join(process.cwd(), './dist/favicon.ico')
+            to: './favicon.ico'
           }
         ])
       ],
@@ -158,6 +159,6 @@ export default function(done) {
       }
     };
 
-    done(webpackConfig);
+    done(webpackConfig, locale);
   });
 }

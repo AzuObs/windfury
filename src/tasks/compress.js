@@ -32,9 +32,7 @@ export default async function() {
             debug(`${path.basename(file)} compressed`);
           }
 
-          if (files.length === 0) {
-            return resolve(compressedFiles);
-          }
+          if (files.length === 0) return resolve(compressedFiles);
 
           return result;
         });

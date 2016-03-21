@@ -133,7 +133,7 @@
     "react/jsx-curly-spacing": [0, "never", {"allowMultiline": true}],
     "react/jsx-handler-names": [0, {
       "eventHandlerPrefix": "handle",
-      "eventHandlerPropPrefix": "on",
+      "eventHandlerPropPrefix": "on"
     }],
     "react/jsx-indent-props": [2, 2],
     "react/jsx-key": 0,
@@ -141,7 +141,7 @@
     "react/jsx-no-bind": [2, {
       "ignoreRefs": false,
       "allowArrowFunctions": false,
-      "allowBind": false,
+      "allowBind": false
     }],
     "react/jsx-no-duplicate-props": [0, {"ignoreCase": false}],
     "react/jsx-no-literals": 0,
@@ -149,11 +149,11 @@
     "react/jsx-pascal-case": 0,
     "react/sort-prop-types": [0, {
       "ignoreCase": false,
-      "callbacksLast": false,
+      "callbacksLast": false
     }],
     "react/jsx-sort-props": [0, {
       "ignoreCase": false,
-      "callbacksLast": false,
+      "callbacksLast": false
     }],
     "react/jsx-uses-react": [2, {"pragma": "React"}],
     "react/no-danger": 0,

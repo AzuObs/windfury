@@ -119,7 +119,8 @@ export default function(done) {
           'process.env': {
             NODE_ENV: JSON.stringify('development')
           },
-          __STATIC__: false
+          __STATIC__: false,
+          __LOCALE__: JSON.stringify('en')
         }),
         new optimize.OccurenceOrderPlugin(),
         new HotModuleReplacementPlugin(),
