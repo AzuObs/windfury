@@ -4,7 +4,7 @@ import browserSync from 'browser-sync';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import hygienistMiddleware from 'hygienist-middleware';
-import winston from 'winston';
+import logatim from 'logatim';
 import generateDevConfig from '../webpack/generateDevConfig';
 
 export default function() {
@@ -34,6 +34,6 @@ export default function() {
       ]
     };
 
-    return browserSyncServer.init(browserSyncServerOpts, () => winston.info('Development server is running.'));
+    return browserSyncServer.init(browserSyncServerOpts, () => logatim.info('Development server is running.'));
   });
 }

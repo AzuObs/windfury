@@ -1,6 +1,6 @@
 import webpack from 'webpack';
 import path from 'path';
-import winston from 'winston';
+import logatim from 'logatim';
 import yaml from 'js-yaml';
 import fs from 'fs';
 import generateProdConfig from '../webpack/generateProdConfig';
@@ -10,18 +10,18 @@ import deploy from './deploy';
 function runCompiler(webpackConfig, locale, hasDeployment, config) {
   const compiler = webpack(webpackConfig);
 
-  winston.info(`Running sources compilation for the ${locale} website's variation.`);
+  logatim.white('Running sources compilation for the ').blue(locale).white(' website\'s variation.').info();
 
   compiler.run(async (err, stats) => {
     const jsonStats = stats.toJson();
 
     if (err) throw err;
-    if (jsonStats.errors.length > 0) winston.error(jsonStats.errors);
-    if (jsonStats.warnings.length > 0) winston.info(jsonStats.warnings);
+    if (jsonStats.errors.length > 0) logatim.error(jsonStats.errors);
+    if (jsonStats.warnings.length > 0) logatim.info(jsonStats.warnings);
 
     const compressedFiles = await compress(locale);
 
-    winston.info(`There is ${compressedFiles.length} file(s) gzipped.`);
+    logatim.white(`There is ${compressedFiles.length} file(s) gzipped.`).info();
 
     if (hasDeployment) deploy(locale, compressedFiles, config);
 

@@ -3,7 +3,7 @@ import path from 'path';
 import zlib from 'zlib';
 import fs from 'fs';
 import RawSource from 'webpack/lib/RawSource';
-import winston from 'winston';
+import logatim from 'logatim';
 
 export default async function(locale) {
   return new Promise((resolve) => {
@@ -27,7 +27,7 @@ export default async function(locale) {
             fs.writeFileSync(file, new RawSource(result));
             compressedFiles.push(file);
 
-            winston.info(`${path.basename(file)} is now gzipped.`);
+            logatim.green(path.basename(file)).white(' is now gzipped.').info();
           }
 
           if (files.length === 0) return resolve(compressedFiles);

@@ -11,7 +11,7 @@ import recursive from 'recursive-readdir';
 import StaticSiteGeneratorPlugin from 'static-site-generator-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import winston from 'winston';
+import logatim from 'logatim';
 
 export default function(done) {
   const babelrc = fs.readFileSync(path.join(process.cwd(), './.babelrc'));
@@ -25,7 +25,7 @@ export default function(done) {
   try {
     babelLoaderQuery = JSON.parse(babelrc);
   } catch (error) {
-    winston.error('ERROR: Error parsing .babelrc.', error);
+    logatim.error('ERROR: Error parsing .babelrc.', error);
   }
 
   babelLoaderQuery.plugins = babelLoaderQuery.plugins || [];

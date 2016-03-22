@@ -2,7 +2,7 @@ import s3 from 's3';
 import path from 'path';
 import fs from 'fs';
 import recursive from 'recursive-readdir';
-import winston from 'winston';
+import logatim from 'logatim';
 
 export default async function(locale, compressedFiles, config) {
   let awsCredentials = {};
@@ -13,7 +13,7 @@ export default async function(locale, compressedFiles, config) {
   try {
     awsCredentials = JSON.parse(fs.readFileSync(path.join(process.cwd(), './aws.json')));
   } catch (exception) {
-    winston.notice('The aws.json file not found. Using environment variables instead.');
+    logatim.white('The').green(' aws.json ').white('file not found. Using environment variables instead.').info();
 
     if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
       throw new Error('Missing AWS credentials in environment. Please check if AWS_ACCESS_KEY_ID' +
@@ -37,7 +37,7 @@ export default async function(locale, compressedFiles, config) {
     }
   });
 
-  winston.info(`Deploying to ${locale}.${config.aws.bucket}.`);
+  logatim.white('Deploying to ').blue(`${locale}.${config.aws.bucket}`).white('.').info();
 
   const defaultS3Params = {
     Bucket: `${locale}.${config.aws.bucket}`
@@ -69,9 +69,9 @@ export default async function(locale, compressedFiles, config) {
       params.s3Params = JSON.parse(JSON.stringify(defaultS3Params));
 
       if (isFileCompressed) {
-        winston.info(`${path.basename(file)} is uploaded (gzipped).`);
+        logatim.green(path.basename(file)).white(' is uploaded (gzipped).').info();
       } else {
-        winston.info(`${path.basename(file)} is uploaded.`);
+        logatim.green(path.basename(file)).white(' is uploaded.').info();
       }
 
       return file;
