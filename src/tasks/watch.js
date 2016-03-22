@@ -4,11 +4,10 @@ import browserSync from 'browser-sync';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import hygienistMiddleware from 'hygienist-middleware';
-import debugLib from 'debug';
+import winston from 'winston';
 import generateDevConfig from '../webpack/generateDevConfig';
 
 export default function() {
-  const debug = debugLib('watch');
   const browserSyncServer = browserSync.create();
 
   generateDevConfig((webpackConfig) => {
@@ -35,6 +34,6 @@ export default function() {
       ]
     };
 
-    return browserSyncServer.init(browserSyncServerOpts, () => debug('browsersync server running'));
+    return browserSyncServer.init(browserSyncServerOpts, () => winston.info('Development server is running.'));
   });
 }

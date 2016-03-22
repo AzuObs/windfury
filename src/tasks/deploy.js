@@ -2,11 +2,9 @@ import s3 from 's3';
 import path from 'path';
 import fs from 'fs';
 import recursive from 'recursive-readdir';
-import debugLib from 'debug';
+import winston from 'winston';
 
-export default async function(compressedFiles) {
-  const debug = debugLib('deploy');
-
+export default async function(locale, compressedFiles, config) {
   let awsCredentials = {};
 
   // To support multi-apps hosting in the same server, an app can define a aws-credentials.json to set
@@ -15,7 +13,12 @@ export default async function(compressedFiles) {
   try {
     awsCredentials = JSON.parse(fs.readFileSync(path.join(process.cwd(), './aws.json')));
   } catch (exception) {
-    debug('aws.json file not found. Using environment variables instead.');
+    winston.notice('The aws.json file not found. Using environment variables instead.');
+
+    if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+      throw new Error('Missing AWS credentials in environment. Please check if AWS_ACCESS_KEY_ID' +
+        ' and AWS_SECRET_ACCESS_KEY exist in your environment.');
+    }
 
     awsCredentials.accessKeyId = process.env.AWS_ACCESS_KEY_ID;
     awsCredentials.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
@@ -30,25 +33,29 @@ export default async function(compressedFiles) {
     s3Options: {
       accessKeyId: awsCredentials.accessKeyId,
       secretAccessKey: awsCredentials.secretAccessKey,
-      region: 'us-west-2'
+      region: config.aws.region
     }
   });
+
+  winston.info(`Deploying to ${locale}.${config.aws.bucket}.`);
+
   const defaultS3Params = {
-    Bucket: 'windfury.mapleinside.com'
+    Bucket: `${locale}.${config.aws.bucket}`
   };
 
-  recursive(path.join(process.cwd(), './dist'), (err, files) => {
+  return recursive(path.join(process.cwd(), './dist', `./${locale}`), (err, files) => {
     const params = {
       s3Params: JSON.parse(JSON.stringify(defaultS3Params))
     };
 
     files.map((file) => {
-      const relativeFile = file.replace(`${process.cwd()}/dist/`, '');
+      const relativeFile = file.replace(`${process.cwd()}/dist/${locale}/`, '');
+      const isFileCompressed = compressedFiles.indexOf(file) > -1;
 
-      params.localFile = path.join(process.cwd(), './dist', relativeFile);
+      params.localFile = path.join(process.cwd(), './dist', `./${locale}`, relativeFile);
       params.s3Params.Key = relativeFile;
 
-      if (compressedFiles.indexOf(file) > -1) params.s3Params.ContentEncoding = 'gzip';
+      if (isFileCompressed) params.s3Params.ContentEncoding = 'gzip';
 
       if (file.match(/\.(css|js|eot|ttf|woff|woff2|png|gif|jpg|svg)$/)) {
         params.s3Params.CacheControl = 'no-transform, max-age=31536000, s-maxage=31536000';
@@ -61,7 +68,11 @@ export default async function(compressedFiles) {
       client.uploadFile(params);
       params.s3Params = JSON.parse(JSON.stringify(defaultS3Params));
 
-      debug(`${path.basename(file)} uploaded`);
+      if (isFileCompressed) {
+        winston.info(`${path.basename(file)} is uploaded (gzipped).`);
+      } else {
+        winston.info(`${path.basename(file)} is uploaded.`);
+      }
 
       return file;
     });

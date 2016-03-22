@@ -7,10 +7,9 @@ import recursive from 'recursive-readdir';
 import path from 'path';
 import autoprefixer from 'autoprefixer';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import debugLib from 'debug';
+import winston from 'winston';
 
-export default function({locale}, done) {
-  const debug = debugLib('generateProdConfig');
+export default function({locale, hasDeployment, config}, done) {
   const babelrc = fs.readFileSync(path.join(process.cwd(), './.babelrc'));
   const cssLoaderQuery = {
     modules: true,
@@ -32,8 +31,7 @@ export default function({locale}, done) {
   try {
     babelLoaderQuery = JSON.parse(babelrc);
   } catch (error) {
-    debug('ERROR: Error parsing .babelrc.');
-    debug(error);
+    winston.error('ERROR: Error parsing .babelrc.', error);
   }
 
   recursive(documentsDir, ['src/*'], (err, files) => {
@@ -159,6 +157,6 @@ export default function({locale}, done) {
       }
     };
 
-    done(webpackConfig, locale);
+    done(webpackConfig, locale, hasDeployment, config);
   });
 }

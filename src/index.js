@@ -5,7 +5,9 @@ import build from './tasks/build';
 
 const packageJson = JSON.parse(fs.readFileSync('./package.json'));
 
-commander.version(packageJson.version);
+commander
+  .version(packageJson.version)
+  .option('-d --deploy', 'Enable sources deployment.');
 
 commander
   .command('watch')
@@ -13,6 +15,6 @@ commander
 
 commander
   .command('build')
-  .action(() => build());
+  .action(() => build(commander.deploy));
 
 commander.parse(process.argv);
