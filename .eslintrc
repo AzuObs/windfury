@@ -189,6 +189,7 @@
       "assignment": true,
       "return": true
     }],
+    "react/jsx-uses-vars": 2,
     "strict": [2, "never"],
     "array-bracket-spacing": [2, "never"],
     "brace-style": [2, "1tbs", {"allowSingleLine": true}],
@@ -289,5 +290,10 @@
       "jsx": true,
       "experimentalObjectRestSpread": true
     }
+  },
+  "globals": {
+    "__LOCALE__": true,
+    "__STATIC__": true,
+    "__PATHS__": true
   }
 }

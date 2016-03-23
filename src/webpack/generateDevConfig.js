@@ -12,12 +12,14 @@ import StaticSiteGeneratorPlugin from 'static-site-generator-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import logatim from 'logatim';
+import {copyDirSyncRecursive} from 'wrench';
 
 export default function(done) {
   const babelrc = fs.readFileSync(path.join(process.cwd(), './.babelrc'));
   const documentsDir = path.join(process.cwd(), './src/documents');
   const distDir = path.join(process.cwd(), './dist');
   const paths = ['/'];
+  const buildDir = path.join(process.cwd(), './src/build');
 
   let babelLoaderQuery = {};
   let webpackConfig = {};
@@ -37,7 +39,13 @@ export default function(done) {
     }]
   }]);
 
-  recursive(documentsDir, ['src/*'], (err, files) => {
+  if (!fs.existsSync(buildDir)) fs.mkdirSync(buildDir);
+
+  copyDirSyncRecursive(path.join(__dirname, '../../helpers'), buildDir, {
+    forceDelete: true
+  });
+
+  recursive(documentsDir, ['index.js', '*.scss'], (err, files) => {
     let documentPath;
 
     files.map((file) => {
@@ -49,11 +57,13 @@ export default function(done) {
       return file;
     });
 
+    fs.writeFileSync(path.join(process.cwd(), './src/build/paths.json'), JSON.stringify(paths));
+
     webpackConfig = {
       devtool: 'inline-source-map',
       context: path.join(process.cwd(), './src'),
       entry: {
-        main: ['webpack-hot-middleware/client', path.join(process.cwd(), './src/index.js')],
+        main: ['webpack-hot-middleware/client', path.join(process.cwd(), './src/build/index.js')],
         async: ['webpack-hot-middleware/client', path.join(process.cwd(), './src/async.js')]
       },
       output: {
@@ -148,6 +158,6 @@ export default function(done) {
       }
     };
 
-    done(webpackConfig);
+    done(webpackConfig, paths);
   });
 }

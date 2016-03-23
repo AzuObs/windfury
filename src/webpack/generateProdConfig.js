@@ -34,7 +34,7 @@ export default function({locale, hasDeployment, config}, done) {
     logatim.error('ERROR: Error parsing .babelrc.', error);
   }
 
-  recursive(documentsDir, ['src/*'], (err, files) => {
+  recursive(documentsDir, ['index.js', '*.scss'], (err, files) => {
     let documentPath;
 
     files.map((file) => {
