@@ -40,7 +40,7 @@ export default function(hasDeployment) {
   }
 
   if (!config.locales || !config.aws.bucket || !config.aws.region) {
-    throw new Error('Missing mandatory configuration in config.yml. Please check the corresponding ' +
+    throw new Error('Missing mandatory configuration in windfury.yml. Please check the corresponding ' +
       'documentation: https://mapleinside.github.io/windfury/configuration.');
   }
 
