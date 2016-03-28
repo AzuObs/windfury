@@ -33,9 +33,9 @@ export default function(hasDeployment) {
   let config = {};
 
   try {
-    config = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), './config.yml')));
+    config = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), './windfury.yml')));
   } catch (exception) {
-    throw new Error('Missing website configuration file. Please specify a config.yml in your ' +
+    throw new Error('Missing website configuration file. Please specify a windfury.yml in your ' +
       'project root with the mandatory options.');
   }
 
