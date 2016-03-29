@@ -2,26 +2,40 @@ import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {Router, RouterContext, match, browserHistory, createMemoryHistory} from 'react-router';
 import {render} from 'react-dom';
-import Routes from './Routes';
+import getRoutes from './getRoutes';
 import Root from '../Root';
 import counterpart from 'counterpart';
+import createStore from './redux/createStore';
+import {Provider} from 'react-redux';
 
 counterpart.setLocale(__LOCALE__);
 
 if (typeof window !== 'undefined' || __STATIC__) require('../style.scss');
 
 if (typeof document !== 'undefined') {
-  render(<Router history={browserHistory} routes={Routes} />, document.getElementById('website'));
+  const routes = getRoutes();
+  const store = createStore(browserHistory, window.__data);
+  const component = (
+    <Provider key="provider" store={store}>
+      <Router history={browserHistory} routes={routes} />
+    </Provider>
+  );
+
+  render(component, document.getElementById('website'));
 }
 
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') window.React = React;
+
 export default function(locals, callback) {
-  const history = createMemoryHistory();
+  const routes = getRoutes();
+  const history = createMemoryHistory(locals.path);
   const location = history.createLocation(locals.path);
   const webpackStatsAssets = locals.webpackStats.toJson().assetsByChunkName;
   const assets = {
     scripts: {},
     styles: {}
   };
+  const store = createStore(history);
 
   if (webpackStatsAssets.async.constructor.name === 'Array') {
     assets.scripts.async = `/${webpackStatsAssets.async[0]}`;
@@ -37,9 +51,13 @@ export default function(locals, callback) {
 
   assets.styles.main = webpackStatsAssets.main.constructor.name === 'Array' && `/${webpackStatsAssets.main[1]}`;
 
-  match({routes: Routes, location}, (error, redirectLocation, renderProps) => {
-    callback(null, `<!DOCTYPE html>${renderToString(
-      <Root assets={assets} component={<RouterContext {...renderProps} />} />
-    )}`);
+  match({history, routes, location}, (error, redirectLocation, renderProps) => {
+    const component = (
+      <Provider key="provider" store={store}>
+        <RouterContext {...renderProps} />
+      </Provider>
+    );
+
+    callback(null, `<!DOCTYPE html>${renderToString(<Root assets={assets} store={store} component={component} />)}`);
   });
 }
