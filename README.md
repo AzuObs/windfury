@@ -10,6 +10,25 @@
 
 Windfury is an advanced static website compiler.
 
+## Features
+
+## How It Works?
+
+### Installation
+
+### Usage
+
+#### AWS S3 Deployment
+
+To be able to deploy with `windfury build --deploy` you need to specify the `AWS_ACCESS_KEY_ID` (your AWS access key ID) and `AWS_SECRET_ACCESS_KEY` (your AWS secret access key) environment variables. If not, Windfury can't authenticate itself with your AWS account.
+
+#### Available Options
+
+* `--deploy`: enable deployment after a `windfury build`;
+* `--debug`: enable debug logs when running Windfury.
+
+### Advanced Configuration
+
 ## License
 
 (The MIT License)

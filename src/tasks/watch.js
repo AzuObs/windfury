@@ -6,57 +6,64 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import hygienistMiddleware from 'hygienist-middleware';
 import logatim from 'logatim';
 import fs from 'fs';
-import generateDevConfig from '../webpack/generateDevConfig';
+import createDevConfig from '../webpack/createDevConfig';
+import extractRoutePaths from '../helpers/extractRoutePaths';
+import writePathsFile from '../helpers/writePathsFile';
+import copyBoilerplates from '../helpers/copyBoilerplates';
 
-export default function() {
+/**
+ * Run development build then watch for file changes.
+ *
+ * @param {Object} config
+ */
+export default function(config) {
   const browserSyncServer = browserSync.create();
 
-  generateDevConfig((webpackConfig, paths) => {
+  return extractRoutePaths(config, paths => {
+    copyBoilerplates(config);
+    fs.writeFileSync(
+      path.join(process.cwd(), config.srcPath, config.buildDirName, 'paths.json'), JSON.stringify(paths)
+    );
+
+    const webpackConfig = createDevConfig(config, paths);
     const compiler = webpack(webpackConfig);
     const browserSyncServerOpts = {
-      open: false,
+      open: config.openOnStart,
+      port: config.server.port,
       server: {
-        baseDir: path.join(process.cwd(), './dist'),
+        baseDir: path.join(process.cwd(), config.distPath),
         middleware: [
-          hygienistMiddleware(path.join(process.cwd(), './dist')),
+          hygienistMiddleware(path.join(process.cwd(), config.distPath)),
           webpackDevMiddleware(compiler, {
+            contentBase: `http://localhost:${config.server.port}`,
             publicPath: webpackConfig.output.publicPath,
             noInfo: true,
+            hot: true,
+            inline: true,
+            lazy: false,
+            quiet: true,
             stats: {
               colors: true
+            },
+            headers: {
+              'Access-Control-Allow-Origin': '*'
             }
           }),
           webpackHotMiddleware(compiler)
         ]
       },
       files: [
-        path.join(process.cwd(), './dist/**/*.html'),
-        path.join(process.cwd(), './dist/**/*.css')
+        path.join(process.cwd(), `./${config.distPath}/**/*.html`),
+        path.join(process.cwd(), `./${config.distPath}/**/*.css`)
       ]
     };
 
-    let routePaths = paths;
-
-    function writePathsFile(routePath, event) {
-      switch (event) {
-        case 'add':
-          if (routePaths.indexOf(routePath) === -1) routePaths = routePaths.concat(routePath);
-
-          break;
-        default:
-          routePaths.splice(routePaths.indexOf(routePath), 1);
-      }
-
-      fs.writeFileSync(path.join(process.cwd(), './src/build/paths.json'), JSON.stringify(routePaths));
-    }
-
     browserSyncServer
-      .watch(path.join(process.cwd(), './src/documents/**/layout.js'), (event, file) => {
-        let routePath = file.replace(path.join(process.cwd(), './src/documents'), '');
+      .watch(path.join(process.cwd(), `${config.srcPath}/documents/**/index.js`), (event, file) => {
+        let routePath = file.replace(path.join(process.cwd(), `${config.srcPath}/documents`), '');
 
-        routePath = routePath.replace('layout.js', '');
-
-        if (event === 'add' || event === 'unlink') writePathsFile(routePath, event);
+        routePath = routePath.replace('index.js', '');
+        writePathsFile(config, paths, routePath, event);
       });
 
     return browserSyncServer.init(browserSyncServerOpts, () => logatim.info('Development server is running.'));

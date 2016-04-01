@@ -1,5 +1,6 @@
 .idea/
 src/
+node_modules/
 .babelrc
 .gitignore
 README.md

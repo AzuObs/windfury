@@ -1,48 +1,47 @@
 import webpack from 'webpack';
-import path from 'path';
 import logatim from 'logatim';
-import yaml from 'js-yaml';
 import fs from 'fs';
-import generateProdConfig from '../webpack/generateProdConfig';
+import path from 'path';
+import generateProdConfig from '../webpack/createProdConfig';
 import compress from './compress';
 import deploy from './deploy';
+import extractRoutePaths from '../helpers/extractRoutePaths';
+import copyBoilerplates from '../helpers/copyBoilerplates';
 
-function runCompiler(webpackConfig, locale, hasDeployment, config) {
-  const compiler = webpack(webpackConfig);
+/**
+ * Run the production build.
+ *
+ * @param {Object} config
+ * @param {Boolean} hasDeployment
+ */
+export default function(config, hasDeployment = false) {
+  return extractRoutePaths(config, paths => {
+    fs.writeFileSync(
+      path.join(process.cwd(), config.srcPath, config.buildDirName, 'paths.json'), JSON.stringify(paths)
+    );
+    copyBoilerplates(config);
 
-  logatim.white('Running sources compilation for the ').blue(locale).white(' website\'s variation.').info();
+    config.locales.map(locale => {
+      const webpackConfig = generateProdConfig(config, locale, paths);
+      const compiler = webpack(webpackConfig);
 
-  compiler.run(async (err, stats) => {
-    const jsonStats = stats.toJson();
+      logatim.white('Running sources compilation for the ').blue(locale).white(' website\'s variation.').info();
 
-    if (err) throw err;
-    if (jsonStats.errors.length > 0) logatim.error(jsonStats.errors);
-    if (jsonStats.warnings.length > 0) logatim.info(jsonStats.warnings);
+      return compiler.run(async (err, stats) => {
+        const jsonStats = stats.toJson();
 
-    const compressedFiles = await compress(locale);
+        if (err) throw err;
+        if (jsonStats.errors.length > 0) logatim.error(jsonStats.errors);
+        if (jsonStats.warnings.length > 0) logatim.info(jsonStats.warnings);
 
-    logatim.white(`There is ${compressedFiles.length} file(s) gzipped.`).info();
+        const compressedFiles = await compress(locale);
 
-    if (hasDeployment) deploy(locale, compressedFiles, config);
+        logatim.white(`There is ${compressedFiles.length} file(s) gzipped.`).info();
 
-    return jsonStats;
+        if (hasDeployment) deploy(locale, compressedFiles, config);
+
+        return jsonStats;
+      });
+    });
   });
-}
-
-export default function(hasDeployment) {
-  let config = {};
-
-  try {
-    config = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), './windfury.yml')));
-  } catch (exception) {
-    throw new Error('Missing website configuration file. Please specify a windfury.yml in your ' +
-      'project root with the mandatory options.');
-  }
-
-  if (!config.locales || !config.aws.bucket || !config.aws.region) {
-    throw new Error('Missing mandatory configuration in windfury.yml. Please check the corresponding ' +
-      'documentation: https://mapleinside.github.io/windfury/configuration.');
-  }
-
-  config.locales.map((locale) => generateProdConfig({locale, hasDeployment, config}, runCompiler));
 }

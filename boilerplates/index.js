@@ -3,17 +3,18 @@ import {renderToString} from 'react-dom/server';
 import {Router, RouterContext, match, browserHistory, createMemoryHistory} from 'react-router';
 import {render} from 'react-dom';
 import getRoutes from './getRoutes';
-import Root from '../Root';
 import counterpart from 'counterpart';
 import createStore from './redux/createStore';
 import {Provider} from 'react-redux';
+import Root from '../Root';
 
-counterpart.setLocale(__LOCALE__);
+const routes = getRoutes();
 
-if (typeof window !== 'undefined' || __STATIC__) require('../style.scss');
+counterpart.setLocale(process.env.LOCALE);
+
+if (typeof window !== 'undefined' || process.env.STATIC) require('../style.scss');
 
 if (typeof document !== 'undefined') {
-  const routes = getRoutes();
   const store = createStore(browserHistory, window.__data);
   const component = (
     <Provider key="provider" store={store}>
@@ -27,7 +28,6 @@ if (typeof document !== 'undefined') {
 if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') window.React = React;
 
 export default function(locals, callback) {
-  const routes = getRoutes();
   const history = createMemoryHistory(locals.path);
   const location = history.createLocation(locals.path);
   const webpackStatsAssets = locals.webpackStats.toJson().assetsByChunkName;
