@@ -34,7 +34,7 @@ export default function(config, locale, paths) {
   return {
     context: path.join(process.cwd(), config.srcPath),
     entry: {
-      main: [path.join(process.cwd(), config.srcPath, config.buildDirName, 'index.js')],
+      main: [path.join(process.cwd(), config.srcPath, config.buildDirName, './index.js')],
       async: [path.join(process.cwd(), config.asyncEntryPoint)]
     },
     output: {
