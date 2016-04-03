@@ -16,10 +16,10 @@ import copyBoilerplates from '../helpers/copyBoilerplates';
  */
 export default function(config, hasDeployment = false) {
   return extractRoutePaths(config, paths => {
-    fs.writeFileSync(
-      path.join(process.cwd(), config.srcPath, config.buildDirName, 'paths.json'), JSON.stringify(paths)
-    );
     copyBoilerplates(config);
+    fs.writeFileSync(
+      path.join(process.cwd(), config.srcPath, config.buildDirName, './paths.json'), JSON.stringify(paths)
+    );
 
     config.locales.map(locale => {
       const webpackConfig = generateProdConfig(config, locale, paths);
@@ -34,7 +34,7 @@ export default function(config, hasDeployment = false) {
         if (jsonStats.errors.length > 0) logatim.error(jsonStats.errors);
         if (jsonStats.warnings.length > 0) logatim.info(jsonStats.warnings);
 
-        const compressedFiles = await compress(locale);
+        const compressedFiles = await compress(locale, config);
 
         logatim.white(`There is ${compressedFiles.length} file(s) gzipped.`).info();
 

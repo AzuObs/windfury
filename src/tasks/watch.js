@@ -22,7 +22,7 @@ export default function(config) {
   return extractRoutePaths(config, paths => {
     copyBoilerplates(config);
     fs.writeFileSync(
-      path.join(process.cwd(), config.srcPath, config.buildDirName, 'paths.json'), JSON.stringify(paths)
+      path.join(process.cwd(), config.srcPath, config.buildDirName, './paths.json'), JSON.stringify(paths)
     );
 
     const webpackConfig = createDevConfig(config, paths);
@@ -51,6 +51,9 @@ export default function(config) {
           }),
           webpackHotMiddleware(compiler)
         ]
+      },
+      ui: {
+        port: config.server.uiPort
       },
       files: [
         path.join(process.cwd(), `./${config.distPath}/**/*.html`),

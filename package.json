@@ -19,7 +19,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "autoprefixer": "^6.3.3",
+    "autoprefixer": "^6.3.6",
     "babel-cli": "^6.6.5",
     "babel-loader": "^6.2.4",
     "babel-plugin-add-module-exports": "^0.1.2",
@@ -44,7 +44,7 @@
     "logatim": "^0.4.4",
     "markdown-loader": "^0.1.7",
     "node-sass": "^3.4.2",
-    "postcss-loader": "^0.8.1",
+    "postcss-loader": "^0.8.2",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "react-interpolate-component": "^0.8.1",

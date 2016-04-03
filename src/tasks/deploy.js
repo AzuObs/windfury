@@ -1,27 +1,19 @@
 import s3 from 's3';
 import path from 'path';
-import fs from 'fs';
 import recursive from 'recursive-readdir';
 import logatim from 'logatim';
 
+/**
+ * Run the deployment to AWS S3.
+ *
+ * @param {String} locale
+ * @param {Array} compressedFiles
+ * @param {Object} config
+ */
 export default async function(locale, compressedFiles, config) {
-  let awsCredentials = {};
-
-  // To support multi-apps hosting in the same server, an app can define a aws-credentials.json to set
-  // custom AWS credentials for static assets deployment purpose.
-  // If there is no such file, the build system will use environment variables.
-  try {
-    awsCredentials = JSON.parse(fs.readFileSync(path.join(process.cwd(), './aws.json')));
-  } catch (exception) {
-    logatim.white('The').green(' aws.json ').white('file not found. Using environment variables instead.').info();
-
-    if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-      throw new Error('Missing AWS credentials in environment. Please check if AWS_ACCESS_KEY_ID' +
-        ' and AWS_SECRET_ACCESS_KEY exist in your environment.');
-    }
-
-    awsCredentials.accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-    awsCredentials.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+  if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+    throw new Error('Missing AWS_ACCESS_KEY_ID and/or AWS_SECRET_ACCESS_KEY environment variables. Please ' +
+      'specify this variables to authorize Felfire to deploy to AWS S3.');
   }
 
   const client = s3.createClient({
@@ -31,8 +23,8 @@ export default async function(locale, compressedFiles, config) {
     multipartUploadThreshold: 20971520,
     multipartUploadSize: 15728640,
     s3Options: {
-      accessKeyId: awsCredentials.accessKeyId,
-      secretAccessKey: awsCredentials.secretAccessKey,
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       region: config.aws.region
     }
   });
@@ -43,16 +35,16 @@ export default async function(locale, compressedFiles, config) {
     Bucket: `${locale}.${config.aws.bucket}`
   };
 
-  return recursive(path.join(process.cwd(), './dist', `./${locale}`), (err, files) => {
+  return recursive(path.join(process.cwd(), config.distPath, `./${locale}`), (err, files) => {
     const params = {
       s3Params: JSON.parse(JSON.stringify(defaultS3Params))
     };
 
     files.map((file) => {
-      const relativeFile = file.replace(`${process.cwd()}/dist/${locale}/`, '');
+      const relativeFile = file.replace(`${process.cwd()}/${config.distPath}/${locale}/`, '');
       const isFileCompressed = compressedFiles.indexOf(file) > -1;
 
-      params.localFile = path.join(process.cwd(), './dist', `./${locale}`, relativeFile);
+      params.localFile = path.join(process.cwd(), config.distPath, `./${locale}`, relativeFile);
       params.s3Params.Key = relativeFile;
 
       if (isFileCompressed) params.s3Params.ContentEncoding = 'gzip';

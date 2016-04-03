@@ -9,7 +9,7 @@ import createConfig from './helpers/createConfig';
 
 const logatimLevel = commander.debug ? 'debug' : 'info';
 const configFileName = 'windfury.yml';
-const packageJson = JSON.parse(fs.readFileSync('./package.json'));
+const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json')));
 
 let config = {};
 

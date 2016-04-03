@@ -17,7 +17,7 @@ import createDefinePluginOpts from '../helpers/createDefinePluginOpts';
  * @returns {Object}
  */
 export default function(config, locale, paths) {
-  const babelLoaderQuery = createBabelLoaderQuery(config);
+  const babelLoaderQuery = createBabelLoaderQuery(config, 'production');
   const definePluginOpts = createDefinePluginOpts(config, locale);
   const cssLoaderQuery = {
     modules: true,
@@ -56,12 +56,14 @@ export default function(config, locale, paths) {
         },
         {
           test: /\.css$/,
-          loaders: [
+          loader: ExtractTextPlugin.extract(
             'style',
-            `css?${JSON.stringify(cssLoaderQuery)}`,
-            'postcss',
-            'resolve-url'
-          ]
+            [
+              `css?${JSON.stringify(cssLoaderQuery)}`,
+              'postcss',
+              'resolve-url'
+            ]
+          )
         },
         {
           test: /\.scss$/,
@@ -87,7 +89,7 @@ export default function(config, locale, paths) {
           test: /\.(jpg|png|gif|svg)$/,
           loaders: [
             `url?limit=${config.base64MaximumSize}&name=[path][name]-[hash].[ext]`,
-            `image-webpack?optimizationLevel=${config.gzipCompressionLevel}&interlaced=true&progressive=true`
+            `image-webpack?optimizationLevel=${config.imageOptimizationLevel}&interlaced=true&progressive=true`
           ]
         },
         {
@@ -128,11 +130,13 @@ export default function(config, locale, paths) {
       ])
     ],
     resolve: {
-      modulesDirectories: ['src', 'node_modules'],
+      modulesDirectories: [config.srcPath, './node_modules'],
       extensions: ['', '.js', '.json']
     },
     postcss() {
-      return [autoprefixer];
+      return [autoprefixer({
+        browsers: config.autoprefixer
+      })];
     }
   };
 }
