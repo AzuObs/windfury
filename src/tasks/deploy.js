@@ -16,6 +16,10 @@ export default function(locale, compressedFiles, config) {
       'specify this variables to authorize Windfury to deploy to AWS S3.');
   }
 
+  let bucketName = locale ? `${locale}.${config.aws.bucket}` : config.aws.bucket;
+
+  if (process.env.NODE_ENV === 'staging') bucketName = `staging.${bucketName}`;
+
   const client = s3.createClient({
     maxAsyncS3: 20,
     s3RetryCount: 3,
@@ -28,7 +32,6 @@ export default function(locale, compressedFiles, config) {
       region: config.aws.region
     }
   });
-  const bucketName = locale ? `${locale}.${config.aws.bucket}` : config.aws.bucket;
   const defaultS3Params = {
     Bucket: bucketName
   };
