@@ -10,10 +10,10 @@ import logatim from 'logatim';
  * @param {Array} compressedFiles
  * @param {Object} config
  */
-export default async function(locale, compressedFiles, config) {
+export default function(locale, compressedFiles, config) {
   if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-    throw new Error('Missing AWS_ACCESS_KEY_ID and/or AWS_SECRET_ACCESS_KEY environment variables. Please ' +
-      'specify this variables to authorize Felfire to deploy to AWS S3.');
+    return logatim.error('Missing AWS_ACCESS_KEY_ID and/or AWS_SECRET_ACCESS_KEY environment variables. Please ' +
+      'specify this variables to authorize Windfury to deploy to AWS S3.');
   }
 
   const client = s3.createClient({
