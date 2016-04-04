@@ -23,7 +23,7 @@ export default function(config, locale = null) {
   }
 
   definePluginOpts['process.env'].STATIC = JSON.stringify(false);
-  definePluginOpts['process.env'].LOCALE = locale ? JSON.stringify(locale) : JSON.stringify(config.locales[0]);
+  definePluginOpts['process.env'].LOCALE = JSON.stringify(locale);
 
   return definePluginOpts;
 }

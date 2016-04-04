@@ -10,7 +10,7 @@ import Root from '../Root';
 
 const routes = getRoutes();
 
-counterpart.setLocale(process.env.LOCALE);
+if (process.env.LOCALE) counterpart.setLocale(process.env.LOCALE);
 
 if (typeof window !== 'undefined' || process.env.STATIC) require('../style.scss');
 
@@ -51,7 +51,7 @@ export default function(locals, callback) {
 
   assets.styles.main = webpackStatsAssets.main.constructor.name === 'Array' && `/${webpackStatsAssets.main[1]}`;
 
-  match({history, routes, location}, (error, redirectLocation, renderProps) => {
+  match({history, routes, location}, (err, redirectLocation, renderProps) => {
     const component = (
       <Provider key="provider" store={store}>
         <RouterContext {...renderProps} />

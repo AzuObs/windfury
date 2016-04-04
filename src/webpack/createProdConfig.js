@@ -29,7 +29,9 @@ export default function(config, locale, paths) {
     reduceTransforms: false,
     zindex: false
   };
-  const distDir = path.join(process.cwd(), config.distPath, `./${locale}`);
+  const distDir = locale ?
+    path.join(process.cwd(), config.distPath, `./${locale}`) :
+    path.join(process.cwd(), config.distPath);
 
   return {
     context: path.join(process.cwd(), config.srcPath),

@@ -1,12 +1,8 @@
-import webpack from 'webpack';
-import logatim from 'logatim';
 import fs from 'fs';
 import path from 'path';
-import generateProdConfig from '../webpack/createProdConfig';
-import compress from './compress';
-import deploy from './deploy';
 import extractRoutePaths from '../helpers/extractRoutePaths';
 import copyBoilerplates from '../helpers/copyBoilerplates';
+import buildWithLocales from '../helpers/buildWithLocales';
 
 /**
  * Run the production build.
@@ -21,27 +17,10 @@ export default function(config, hasDeployment = false) {
       path.join(process.cwd(), config.srcPath, config.buildDirName, './paths.json'), JSON.stringify(paths)
     );
 
-    config.locales.map(locale => {
-      const webpackConfig = generateProdConfig(config, locale, paths);
-      const compiler = webpack(webpackConfig);
-
-      logatim.white('Running sources compilation for the ').blue(locale).white(' website\'s variation.').info();
-
-      return compiler.run(async (err, stats) => {
-        const jsonStats = stats.toJson();
-
-        if (err) throw err;
-        if (jsonStats.errors.length > 0) logatim.error(jsonStats.errors);
-        if (jsonStats.warnings.length > 0) logatim.info(jsonStats.warnings);
-
-        const compressedFiles = await compress(locale, config);
-
-        logatim.white(`There is ${compressedFiles.length} file(s) gzipped.`).info();
-
-        if (hasDeployment) deploy(locale, compressedFiles, config);
-
-        return jsonStats;
-      });
-    });
+    if (config.locales) {
+      config.locales.map(locale => buildWithLocales(config, paths, hasDeployment, locale));
+    } else {
+      buildWithLocales(config, paths, hasDeployment);
+    }
   });
 }

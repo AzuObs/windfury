@@ -20,7 +20,7 @@ export default function(config, done) {
       documentPath = path.dirname(documentPath);
 
       if (documentPath !== '/') documentPath += '/';
-      if (paths.indexOf(documentPath) === -1) paths.push(documentPath);
+      if (paths.indexOf(documentPath) === -1 && documentPath !== '/home/') paths.push(documentPath);
 
       return file;
     });

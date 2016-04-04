@@ -28,23 +28,30 @@ export default async function(locale, compressedFiles, config) {
       region: config.aws.region
     }
   });
-
-  logatim.white('Deploying to ').blue(`${locale}.${config.aws.bucket}`).white('.').info();
-
+  const bucketName = locale ? `${locale}.${config.aws.bucket}` : config.aws.bucket;
   const defaultS3Params = {
-    Bucket: `${locale}.${config.aws.bucket}`
+    Bucket: bucketName
   };
+  const distDir = locale ?
+    path.join(process.cwd(), config.distPath, `./${locale}`) :
+    path.join(process.cwd(), config.distPath);
 
-  return recursive(path.join(process.cwd(), config.distPath, `./${locale}`), (err, files) => {
+  logatim.white('Deploying to ').blue(bucketName).white('.').info();
+
+  return recursive(distDir, (err, files) => {
     const params = {
       s3Params: JSON.parse(JSON.stringify(defaultS3Params))
     };
 
     files.map((file) => {
-      const relativeFile = file.replace(`${process.cwd()}/${config.distPath}/${locale}/`, '');
+      const relativeFile = locale ?
+        file.replace(`${process.cwd()}/${config.distPath}/${locale}/`, '') :
+        file.replace(`${process.cwd()}/${config.distPath}/`, '');
       const isFileCompressed = compressedFiles.indexOf(file) > -1;
 
-      params.localFile = path.join(process.cwd(), config.distPath, `./${locale}`, relativeFile);
+      params.localFile = locale ?
+        path.join(process.cwd(), config.distPath, `./${locale}`, relativeFile) :
+        path.join(process.cwd(), config.distPath, relativeFile);
       params.s3Params.Key = relativeFile;
 
       if (isFileCompressed) params.s3Params.ContentEncoding = 'gzip';

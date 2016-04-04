@@ -10,12 +10,8 @@ export default function() {
     <Route path="/" component={Website}>
       <IndexRoute component={Home} />
       {paths.map((path, index) => {
-        let routerPath = path.substring(0, (path.length - 1));
-
-        routerPath = routerPath.substring(1, routerPath.length);
-
-        if (routerPath !== '' && routerPath !== 'not-found') {
-          return <Route key={index} path={routerPath} component={require(`../documents/${routerPath}/index.js`)} />;
+        if (path !== '' && path !== '/not-found') {
+          return <Route key={index} path={path} component={require(`../documents${path}index`)} />;
         }
 
         return null;
