@@ -6,12 +6,18 @@
 
 > Shamanize your next static website combining React and BrowserSync/Webpack tools.
 
+Other compiler:
+
+* [Felfire](https://github.com/mapleinside/felfire)
+
 ## What is Windfury?
 
 Windfury is an advanced static website compiler. It's mainly focused on improving developer productivity by using [React](https://facebook.github.io/react/) as the technology behind his static compilation.
 This compiler currently supports only [AWS S3](https://aws.amazon.com/s3/) for deployment.
 
 Windfury uses among others [BrowserSync](https://www.browsersync.io/) and [Webpack](https://webpack.github.io/) in development environment.
+
+You can find an [Yeoman generator](https://github.com/mapleinside/generator-static-website) to help you get started with Windfury's architecture.
 
 ## Features
 
@@ -58,6 +64,10 @@ With the power of Webpack, you can use environment variables into your client Ja
 ### AWS S3 Deployment
 
 When your compilation is done, Windfury will deploy it to your AWS S3 corresponding bucket, with the appropriate headers for caching and content type.
+
+### Dynamic Routing
+
+There's no need to trouble yourself with your website's router. Windfury takes care for you about it with its dynamic routing system. Just declare your [documents with the right structure](#website-architecture) and you're in business.
 
 ## How It Works?
 
@@ -162,7 +172,7 @@ gzip_compression_level: 9
 # The Gzip compression ratio between the original source versus the compressed source.
 gzip_compression_ratio: 0.8
 
-# Enable or not application's home page opening on Felfire start.
+# Enable or not website's home page opening on Windfury start.
 open_on_start: false
 
 # Proxy configuration.
@@ -175,7 +185,7 @@ server:
   ui_port: 3001
     
 # An array of the environment variables you need to resolve 
-# with Felfire. NODE_ENV is always resolved automaticaly.
+# with Windfury. NODE_ENV is always resolved automaticaly.
 # CUSTOM_ENVIRONMENT_VAR means that the value of this environment variable in your host is resolved.
 # You can force a value by passing CUSTOM_ENVIRONMENT_VAR=forcedValue.
 env:
@@ -184,12 +194,21 @@ env:
   
 # An array of locales to enable the i18n compilation.
 # Windfury will compile your website with each locale on their respective directories,
-# then, it will deploy each directory into their respective AWS S3 bucket.
+# then, it will deploy each directory into its corresponding AWS S3 bucket.
 locales:
   - en
   - fr
   - ...
 ```
+
+### Website's Architecture
+
+<a name="website-architecture"></a>Windfury works with a defined and strict architecture, not everything can be custom on your directory, file, and code structure.
+Windfury helps you to maintain your static website, and it needs some architecture conventions to simplify its — and your — job.
+
+#### File and Directory Structure
+
+[...]
 
 ## License
 
