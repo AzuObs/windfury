@@ -21,9 +21,15 @@ export default function(locale, compressedFiles, config) {
       'specify this variable to tell Windfury on which AWS S3 bucket to deploy on AWS S3.');
   }
 
-  let bucketName = locale && config.locales[0] !== locale ?
-    `${locale}.${config.aws.bucket}` :
-    config.aws.bucket;
+  let bucketName = null;
+
+  if (locale && config.locales[0] !== locale) {
+    bucketName = `${locale}.${config.aws.bucket}`;
+  } else {
+    bucketName = config.defaultBucketWithPrefix && process.env.DEPLOY_TO !== 'staging' ?
+      `www.${config.aws.bucket}` :
+      config.aws.bucket;
+  }
 
   if (process.env.DEPLOY_TO === 'staging') bucketName = `staging.${bucketName}`;
 
