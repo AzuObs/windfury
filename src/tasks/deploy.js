@@ -16,7 +16,7 @@ export default function(locale, compressedFiles, config) {
       'specify this variables to authorize Windfury to deploy to AWS S3.');
   }
 
-  let bucketName = locale ? `${locale}.${config.aws.bucket}` : config.aws.bucket;
+  let bucketName = locale && config.locales[0] !== locale ? `${locale}.${config.aws.bucket}` : config.aws.bucket;
 
   if (process.env.NODE_ENV === 'staging') bucketName = `staging.${bucketName}`;
 
