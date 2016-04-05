@@ -132,7 +132,6 @@ Thanks to [Counterpart](https://github.com/martinandert/counterpart), it will se
 
 Please note that each website translated version should be standalone versus each others, to performs the best of static website technologies. With this philosophy in mind, Windfury will deploy each website version to their respective AWS S3 bucket.
 Your AWS S3 buckets need to be named as \[locale\].\[your-bucket-name-configuration\] (e.q. _fr.felfire.com_ for French translation). The default locale (the first index in array) will be deployed to a AWS S3 bucket without locale prefix.
-You can instead, define or not a _www_ prefix for the default locale if you want in the advanced configuration (default to yes).
 
 If you don't want to translate your website, please do not specify locales in the configuration and name your AWS S3 bucket without locale prefix.
 
@@ -203,9 +202,6 @@ locales:
   - en
   - fr
   - ...
-  
-# Add or not a www prefix to the default AWS S3 bucket name. 
-default_bucket_with_prefix: true
 ```
 
 ### Website's Architecture

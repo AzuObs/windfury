@@ -41,7 +41,6 @@ export default function(customConfig) {
     gzipCompressionRatio: customConfig.gzip_compression_ratio ? customConfig.gzip_compression_ratio : 0.8,
     imageOptimizationLevel: customConfig.image_optimization_level ? customConfig.image_optimization_level : 7,
     openOnStart: customConfig.open_on_start ? customConfig.open_on_start : false,
-    locales: customConfig.locales ? customConfig.locales : null,
-    defaultBucketWithPrefix: customConfig.default_bucket_with_prefix ? customConfig.default_bucket_with_prefix : true
+    locales: customConfig.locales ? customConfig.locales : null
   };
 }
