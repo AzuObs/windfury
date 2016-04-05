@@ -48,8 +48,8 @@ export default function(locale, compressedFiles, config) {
 
     files.map((file) => {
       const relativeFile = locale ?
-        file.replace(`${process.cwd()}/${config.distPath}/${locale}/`, '') :
-        file.replace(`${process.cwd()}/${config.distPath}/`, '');
+        file.replace(path.join(process.cwd(), config.distPath, `${locale}/`), '') :
+        file.replace(path.join(process.cwd(), `${config.distPath}/`), '');
       const isFileCompressed = compressedFiles.indexOf(file) > -1;
 
       params.localFile = locale ?
