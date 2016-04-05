@@ -13,12 +13,25 @@ import logatim from 'logatim';
 export default function(locale, compressedFiles, config) {
   if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
     return logatim.error('Missing AWS_ACCESS_KEY_ID and/or AWS_SECRET_ACCESS_KEY environment variables. Please ' +
-      'specify this variables to authorize Windfury to deploy to AWS S3.');
+      'specify this variables to authorize Windfury to deploy on AWS S3.');
   }
 
-  let bucketName = locale && config.locales[0] !== locale ? `${locale}.${config.aws.bucket}` : config.aws.bucket;
+  if (!process.env.DEPLOY_TO) {
+    return logatim.error('Missing DEPLOY_TO environment variable. Please ' +
+      'specify this variable to tell Windfury on which AWS S3 bucket to deploy on AWS S3.');
+  }
 
-  if (process.env.NODE_ENV === 'staging') bucketName = `staging.${bucketName}`;
+  let bucketName = null;
+
+  if (locale && config.locales[0] !== locale) {
+    bucketName = `${locale}.${config.aws.bucket}`;
+  } else {
+    bucketName = config.defaultBucketWithPrefix && process.env.DEPLOY_TO !== 'staging' ?
+      `www.${config.aws.bucket}` :
+      config.aws.bucket;
+  }
+
+  if (process.env.DEPLOY_TO === 'staging') bucketName = `staging.${bucketName}`;
 
   const client = s3.createClient({
     maxAsyncS3: 20,

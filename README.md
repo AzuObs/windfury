@@ -123,6 +123,7 @@ if (module.hot) module.hot.accept();
 #### AWS S3 Deployment
 
 To be able to deploy with `windfury build --deploy` you need to specify the `AWS_ACCESS_KEY_ID` (your AWS access key ID) and `AWS_SECRET_ACCESS_KEY` (your AWS secret access key) environment variables. If not, Windfury can't authenticate itself with your AWS account.
+A third environment variable, `DEPLOY_TO`, is mandatory to tell Windfury on which bucket to deploy.
 
 #### Internationalization
 
@@ -130,7 +131,8 @@ To be able to deploy with `windfury build --deploy` you need to specify the `AWS
 Thanks to [Counterpart](https://github.com/martinandert/counterpart), it will set the locale on Counterpart's singleton in order to you to be able to translate your content.
 
 Please note that each website translated version should be standalone versus each others, to performs the best of static website technologies. With this philosophy in mind, Windfury will deploy each website version to their respective AWS S3 bucket.
-Your AWS S3 buckets need to be named as [locale].[your-bucket-name-configuration] (e.q. _en.felfire.com_ and _fr.felfire.com_ for English and French translations).
+Your AWS S3 buckets need to be named as \[locale\].\[your-bucket-name-configuration\] (e.q. _fr.felfire.com_ for French translation). The default locale (the first index in array) will be deployed to a AWS S3 bucket without locale prefix.
+You can instead, define or not a _www_ prefix for the default locale if you want in the advanced configuration (default to yes).
 
 If you don't want to translate your website, please do not specify locales in the configuration and name your AWS S3 bucket without locale prefix.
 
@@ -195,10 +197,15 @@ env:
 # An array of locales to enable the i18n compilation.
 # Windfury will compile your website with each locale on their respective directories,
 # then, it will deploy each directory into its corresponding AWS S3 bucket.
+# Note that the first locale will be the default one, with a AWS S3 bucket name
+# without locale prefix.
 locales:
   - en
   - fr
   - ...
+  
+# Add or not a www prefix to the default AWS S3 bucket name. 
+default_bucket_with_prefix: true
 ```
 
 ### Website's Architecture
