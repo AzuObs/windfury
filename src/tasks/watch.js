@@ -41,7 +41,6 @@ export default function(config) {
             hot: true,
             inline: true,
             lazy: false,
-            quiet: true,
             stats: {
               colors: true
             },
