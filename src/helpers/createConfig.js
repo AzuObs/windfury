@@ -7,7 +7,7 @@ import _ from 'lodash';
  * @returns {Object}
  */
 export default function(customConfig) {
-  const env = ['NODE_ENV'];
+  let env = ['NODE_ENV'];
 
   if (
     !_.hasIn(customConfig, 'aws') ||
@@ -18,7 +18,7 @@ export default function(customConfig) {
       ' in your windfury.yml.');
   }
 
-  if (typeof customConfig.env !== 'undefined') env.concat(customConfig.env);
+  if (typeof customConfig.env !== 'undefined') env = env.concat(customConfig.env);
 
   return {
     asyncEntryPoint: customConfig.async_entry_point ? customConfig.async_entry_point : './src/async.js',
