@@ -3,10 +3,11 @@ import fs from 'fs';
 import logatim from 'logatim';
 import path from 'path';
 import yaml from 'js-yaml';
+import _ from 'lodash';
 import watch from './tasks/watch';
 import build from './tasks/build';
 import createConfig from './helpers/createConfig';
-import addDevConfig from './helpers/addDevConfig';
+import createDevConfig from './helpers/createDevConfig';
 
 const logatimLevel = commander.debug ? 'debug' : 'info';
 const configFileName = 'windfury.yml';
@@ -15,6 +16,7 @@ const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.
 
 let config = {};
 let customConfig = {};
+let devCustomConfig = {};
 
 logatim.setLevel(logatimLevel);
 
@@ -24,12 +26,14 @@ try {
   throw new Error(err);
 }
 
-config = createConfig(customConfig);
-
-if (fs.statSync(path.join(process.cwd(), `./${devConfigFileName}`))) {
-  customConfig = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), `./${devConfigFileName}`), 'utf8'));
-  config = addDevConfig(config, customConfig);
+try {
+  fs.statSync(path.join(process.cwd(), `./${devConfigFileName}`)).isFile();
+  devCustomConfig = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), `./${devConfigFileName}`), 'utf8'));
+} catch (err) {
+  logatim.info(`No ${devConfigFileName} found. Using default development configuration.`);
 }
+
+config = _.assign(createConfig(customConfig), createDevConfig(devCustomConfig));
 
 commander
   .version(packageJson.version)

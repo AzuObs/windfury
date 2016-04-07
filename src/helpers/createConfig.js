@@ -29,10 +29,6 @@ export default function(customConfig) {
       bucket: customConfig.aws.bucket,
       region: customConfig.aws.region
     },
-    server: {
-      port: _.hasIn(customConfig, 'server.port') ? customConfig.server.port : 3000,
-      uiPort: _.hasIn(customConfig, 'proxy.ui_port') ? customConfig.proxy.ui_port : 3001
-    },
     env,
     babelConfigPath: customConfig.babel_config_path ? customConfig.babel_config_path : './.babelrc',
     base64MaximumSize: customConfig.base64_maximum_size ? customConfig.base64_maximum_size : 10000,
@@ -40,7 +36,6 @@ export default function(customConfig) {
     gzipCompressionLevel: customConfig.gzip_compression_level ? customConfig.gzip_compression_level : 9,
     gzipCompressionRatio: customConfig.gzip_compression_ratio ? customConfig.gzip_compression_ratio : 0.8,
     imageOptimizationLevel: customConfig.image_optimization_level ? customConfig.image_optimization_level : 7,
-    openOnStart: customConfig.open_on_start ? customConfig.open_on_start : false,
     locales: customConfig.locales ? customConfig.locales : null,
     defaultBucketWithPrefix: customConfig.default_bucket_with_prefix ? customConfig.default_bucket_with_prefix : true
   };
