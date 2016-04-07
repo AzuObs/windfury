@@ -6,21 +6,29 @@ import yaml from 'js-yaml';
 import watch from './tasks/watch';
 import build from './tasks/build';
 import createConfig from './helpers/createConfig';
+import addDevConfig from './helpers/addDevConfig';
 
 const logatimLevel = commander.debug ? 'debug' : 'info';
 const configFileName = 'windfury.yml';
+const devConfigFileName = 'windfury-dev.yml';
 const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json')));
 
 let config = {};
+let customConfig = {};
 
 logatim.setLevel(logatimLevel);
 
 try {
-  const customConfig = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), `./${configFileName}`), 'utf8'));
-
-  config = createConfig(customConfig);
+  customConfig = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), `./${configFileName}`), 'utf8'));
 } catch (err) {
   throw new Error(err);
+}
+
+config = createConfig(customConfig);
+
+if (fs.statSync(path.join(process.cwd(), `./${devConfigFileName}`))) {
+  customConfig = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), `./${devConfigFileName}`), 'utf8'));
+  config = addDevConfig(config, customConfig);
 }
 
 commander
