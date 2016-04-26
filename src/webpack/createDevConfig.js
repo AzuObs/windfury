@@ -40,7 +40,7 @@ export default function(config, paths) {
       path: path.join(process.cwd(), config.distPath),
       filename: '[name].js',
       libraryTarget: 'umd',
-      publicPath: '/'
+      publicPath: `${config.developmentEndpoint}/`
     },
     module: {
       loaders: [

@@ -43,7 +43,7 @@ export default function(config, locale, paths) {
       path: distDir,
       filename: '[name]-[hash].js',
       libraryTarget: 'umd',
-      publicPath: '/'
+      publicPath: `${config.productionEndpoint}/`
     },
     module: {
       loaders: [
