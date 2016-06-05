@@ -9,10 +9,6 @@ import _ from 'lodash';
 export default function(customConfig) {
   let env = ['NODE_ENV'];
 
-  if (!_.hasIn(customConfig, 'production_endpoint')) {
-    throw new Error('Missing mandatory option production_endpoint in your windfury.yml.');
-  }
-
   if (
     !_.hasIn(customConfig, 'aws') ||
     !_.hasIn(customConfig, 'aws.bucket') ||
@@ -41,7 +37,6 @@ export default function(customConfig) {
     gzipCompressionRatio: customConfig.gzip_compression_ratio ? customConfig.gzip_compression_ratio : 0.8,
     imageOptimizationLevel: customConfig.image_optimization_level ? customConfig.image_optimization_level : 7,
     locales: customConfig.locales ? customConfig.locales : null,
-    defaultBucketWithPrefix: customConfig.default_bucket_with_prefix ? customConfig.default_bucket_with_prefix : true,
-    productionEndpoint: customConfig.production_endpoint
+    defaultBucketWithPrefix: customConfig.default_bucket_with_prefix ? customConfig.default_bucket_with_prefix : true
   };
 }

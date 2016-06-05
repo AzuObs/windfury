@@ -1,6 +1,6 @@
 {
   "name": "windfury",
-  "version": "1.0.0-alpha.20",
+  "version": "1.0.0-alpha.21",
   "description": "Shamanize your next static website combining React and BrowserSync/Webpack tools.",
   "main": "index.js",
   "scripts": {
