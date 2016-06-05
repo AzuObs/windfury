@@ -17,12 +17,6 @@ import createDefinePluginOpts from '../helpers/createDefinePluginOpts';
  * @returns {Object}
  */
 export default function(config, locale, paths) {
-  if (!process.env.WEBSITE_URL) {
-    throw new Error('Missing environment variable WEBSITE_URL. Please specify in order to allow Windfury to ' +
-    'define assets root URL.');
-  }
-
-  const publicPath = process.env.WEBSITE_URL || '';
   const babelLoaderQuery = createBabelLoaderQuery(config, 'production');
   const definePluginOpts = createDefinePluginOpts(config, locale);
   const cssLoaderQuery = {
@@ -49,7 +43,7 @@ export default function(config, locale, paths) {
       path: distDir,
       filename: '[name]-[hash].js',
       libraryTarget: 'umd',
-      publicPath: `${publicPath}/`
+      publicPath: '/'
     },
     module: {
       loaders: [
