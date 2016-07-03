@@ -1,14 +1,10 @@
-import {
-  IgnorePlugin,
-  DefinePlugin,
-  HotModuleReplacementPlugin,
-  NoErrorsPlugin,
-  optimize
-} from 'webpack';
+import {IgnorePlugin, DefinePlugin, HotModuleReplacementPlugin, NoErrorsPlugin, optimize} from 'webpack';
 import path from 'path';
 import StaticSiteGeneratorPlugin from 'static-site-generator-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import WatchIgnorePlugin from 'watch-ignore-webpack-plugin';
+
 import createBabelLoaderQuery from '../helpers/createBabelLoaderQuery';
 import createDefinePluginOpts from '../helpers/createDefinePluginOpts';
 
@@ -29,7 +25,7 @@ export default function(config, paths) {
     entry: {
       main: [
         'webpack-hot-middleware/client',
-        path.join(process.cwd(), `${config.srcPath}/${config.buildDirName}/index.js`)
+        path.join(process.cwd(), './src/index.js')
       ],
       async: [
         'webpack-hot-middleware/client',
@@ -38,7 +34,7 @@ export default function(config, paths) {
     },
     output: {
       path: path.join(process.cwd(), config.distPath),
-      filename: '[name].js',
+      filename: '[name]-[hash].js',
       libraryTarget: 'umd',
       publicPath: `${config.developmentEndpoint}/`
     },
@@ -111,7 +107,8 @@ export default function(config, paths) {
           from: path.join(process.cwd(), `${config.srcPath}/favicon.ico`),
           to: './favicon.ico'
         }
-      ])
+      ]),
+      new WatchIgnorePlugin([path.join(process.cwd(), './src/helpers/createRoutes.js')])
     ],
     resolve: {
       modulesDirectories: [config.srcPath, './node_modules'],

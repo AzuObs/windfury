@@ -9,13 +9,11 @@ import _ from 'lodash';
 export default function(customConfig) {
   let env = ['NODE_ENV'];
 
-  if (
-    !_.hasIn(customConfig, 'aws') ||
-    !_.hasIn(customConfig, 'aws.bucket') ||
-    !_.hasIn(customConfig, 'aws.region')
-  ) {
-    throw new Error('Missing mandatory options. Please specify aws.bucket and aws.region' +
-      ' in your windfury.yml.');
+  if (!_.hasIn(customConfig, 'aws') || !_.hasIn(customConfig, 'aws.bucket') || !_.hasIn(customConfig, 'aws.region')) {
+    throw new Error(`
+      Missing mandatory options. Please specify aws.bucket and aws.region 
+      in your windfury.yml.
+    `);
   }
 
   if (typeof customConfig.env !== 'undefined') env = env.concat(customConfig.env);

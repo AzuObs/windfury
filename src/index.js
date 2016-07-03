@@ -4,8 +4,9 @@ import logatim from 'logatim';
 import path from 'path';
 import yaml from 'js-yaml';
 import _ from 'lodash';
+
 import watch from './tasks/watch';
-import build from './tasks/build';
+// import build from './tasks/build';
 import createConfig from './helpers/createConfig';
 import createDevConfig from './helpers/createDevConfig';
 
@@ -42,7 +43,7 @@ commander
 commander
   .command('watch')
   .action(() => watch(config));
-commander
-  .command('build')
-  .action(() => build(config, commander.deploy));
+// commander
+//   .command('build')
+//   .action(() => build(config, commander.deploy));
 commander.parse(process.argv);
