@@ -4,7 +4,9 @@
   "description": "Shamanize your next static website combining React and BrowserSync/Webpack tools.",
   "main": "index.js",
   "scripts": {
+    "start": "babel -w ./src -d ./lib",
     "test": "eslint ./src ./boilerplates",
+    "build": "babel -d ./src ./lib",
     "release": "npm publish"
   },
   "bin": {

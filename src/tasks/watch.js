@@ -7,9 +7,10 @@ import hygienistMiddleware from 'hygienist-middleware';
 import logatim from 'logatim';
 import reactRouterToArray from 'react-router-to-array';
 
-import createDevConfig from 'webpack/createDevConfig';
+import createDevConfig from '../webpack/createDevConfig';
+import requireCreateRoutesModule from '../helpers/requireCreateRoutesModule';
 
-const createRoutesFilePath = path.join(process.cwd(), './src/helpers/createRoutes');
+// const createRoutesFilePath = path.join(process.cwd(), './src/helpers/createRoutes');
 
 /**
  * Run development build then watch for file changes.
@@ -18,7 +19,7 @@ const createRoutesFilePath = path.join(process.cwd(), './src/helpers/createRoute
  * @param {Boolean} watchRouter
  */
 function watch(config, watchRouter = true) {
-  const routes = require(createRoutesFilePath)();
+  const routes = requireCreateRoutesModule();
   const browserSyncServer = browserSync.create();
   const paths = reactRouterToArray(routes);
   const webpackConfig = createDevConfig(config, paths);
