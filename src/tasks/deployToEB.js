@@ -113,7 +113,7 @@ export default function deployToEB({envFile = null, AWSEBEnv = null} = {envFile:
 
   if (!AWSEBApp || !AWSEBBucket || !AWSRegion || !dockerImage || !AWSEBEnv || !envFile) {
     throw new Error(
-      'Missing mandatory configuration properties. Please specify it to let Felfire '
+      'Missing mandatory configuration properties. Please specify it to let Windfury '
       + 'to be able to deploy on AWS Elastic Beanstalk.'
     );
   }
@@ -137,7 +137,7 @@ export default function deployToEB({envFile = null, AWSEBEnv = null} = {envFile:
     const fileName = `${versionName}.zip`;
     const deploymentFileName = `/tmp/${fileName}`;
 
-    let cmd = 'cp -R node_modules/felfire/lib/utils/eb-extensions/* build/eb/.ebextensions/ && ';
+    let cmd = 'cp -R node_modules/windfury/lib/utils/eb-extensions/* build/eb/.ebextensions/ && ';
 
     if (hasNewRelic) {
       cmd += `sed -i "s/{{NEW_RELIC_APP_NAME}}/${newRelicAppName}/" build/eb/.ebextensions/newrelic.config && ` +

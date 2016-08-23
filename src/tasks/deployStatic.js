@@ -78,12 +78,12 @@ export default function deployStatic() {
   if (!AWSAccessKeyId || !AWSSecretAccessKey) {
     throw new Error(
       'Missing \'AWS_ACCESS_KEY_ID\' and/or \'AWS_SECRET_ACCESS_KEY\' environment variables. Please '
-      + 'specify it to authorize Felfire to deploy on AWS S3.'
+      + 'specify it to authorize Windfury to deploy on AWS S3.'
     );
   }
 
   if (!AWSS3StaticBucket || !AWSRegion) {
-    throw new Error('Missing \'aws.s3.static.bucket\' and/or \'aws.region\' properties in \'felfire.yml\'.');
+    throw new Error('Missing \'aws.s3.static.bucket\' and/or \'aws.region\' properties in \'windfury.yml\'.');
   }
 
   return new Promise(async resolve => {

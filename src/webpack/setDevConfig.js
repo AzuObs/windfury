@@ -7,7 +7,7 @@ import nodeExternals from 'webpack-node-externals';
 import _ from 'lodash';
 
 import resolveEnvConfig from '../helpers/resolveEnvConfig';
-import * as felfireConfig from '../utils/Config';
+import * as windfuryConfig from '../utils/Config';
 
 const HotModuleReplacementPlugin = webpack.HotModuleReplacementPlugin;
 const OccurenceOrderPlugin = webpack.optimize.OccurenceOrderPlugin;
@@ -55,7 +55,7 @@ export default function(options = {}) {
     context: process.cwd(),
     cache: true,
     output: {
-      publicPath: `http://localhost:${felfireConfig.appPort + 1}/build/`
+      publicPath: `http://localhost:${windfuryConfig.appPort + 1}/build/`
     },
     module: {
       loaders: [
@@ -156,7 +156,7 @@ export default function(options = {}) {
       new DefinePlugin({
         'process.env': {
           ...definePluginConfig,
-          felfire: JSON.stringify(felfireConfig),
+          windfury: JSON.stringify(windfuryConfig),
           isClient: JSON.stringify(true),
           isServer: JSON.stringify(false)
         }
@@ -167,7 +167,7 @@ export default function(options = {}) {
       })
     ],
     postcss: () => [autoprefixer({
-      browsers: felfireConfig.autoprefixerBrowsers
+      browsers: windfuryConfig.autoprefixerBrowsers
     })],
     resolve: config.resolve,
     resolveLoader: config.resolveLoader
@@ -213,7 +213,7 @@ export default function(options = {}) {
       new DefinePlugin({
         'process.env': {
           ...definePluginConfig,
-          felfire: JSON.stringify(felfireConfig),
+          windfury: JSON.stringify(windfuryConfig),
           isClient: JSON.stringify(false),
           isServer: JSON.stringify(true)
         }

@@ -7,7 +7,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import fs from 'fs-extra';
 
 import resolveEnvConfig from '../helpers/resolveEnvConfig';
-import * as felfireConfig from '../utils/Config';
+import * as windfuryConfig from '../utils/Config';
 
 const HotModuleReplacementPlugin = webpack.HotModuleReplacementPlugin;
 const OccurenceOrderPlugin = webpack.optimize.OccurenceOrderPlugin;
@@ -34,7 +34,7 @@ export default function(options = {}) {
   const config = {
     context: process.cwd(),
     output: {
-      publicPath: felfireConfig.cdnEndpoint
+      publicPath: windfuryConfig.cdnEndpoint
     },
     module: {
       loaders: [
@@ -154,7 +154,7 @@ export default function(options = {}) {
       new DefinePlugin({
         'process.env': {
           ...definePluginConfig,
-          felfire: JSON.stringify(felfireConfig),
+          windfury: JSON.stringify(windfuryConfig),
           isClient: JSON.stringify(false),
           isServer: JSON.stringify(true)
         }
@@ -168,7 +168,7 @@ export default function(options = {}) {
       })
     ]),
     postcss: () => [autoprefixer({
-      browsers: felfireConfig.autoprefixerBrowsers
+      browsers: windfuryConfig.autoprefixerBrowsers
     })],
     resolve: config.resolve,
     resolveLoader: config.resolveLoader
@@ -208,7 +208,7 @@ export default function(options = {}) {
       new DefinePlugin({
         'process.env': {
           ...definePluginConfig,
-          felfire: JSON.stringify(felfireConfig),
+          windfury: JSON.stringify(windfuryConfig),
           isClient: JSON.stringify(false),
           isServer: JSON.stringify(true)
         }

@@ -7,9 +7,9 @@ import yaml from 'js-yaml';
  *
  * @returns {Promise}
  */
-export default async function setupFelfire() {
+export default async function setupWindfury() {
   return await new Promise(resolve => {
-    const felfireConfig = {
+    const windfuryConfig = {
       autoprefixer: {
         browsers: [
           'Android 2.3',
@@ -27,16 +27,16 @@ export default async function setupFelfire() {
         force: false
       },
       cdn: {
-        endpoint: '//static.felfire.com/'
+        endpoint: '//static.windfury.com/'
       },
       docker: {
-        image: 'felfire/my-felfire-app'
+        image: 'windfury/my-windfury-app'
       },
       aws: {
         region: 'us-west-2',
         s3: {
           static: {
-            bucket: 'static.felfire.com'
+            bucket: 'static.windfury.com'
           }
         },
         eb: {
@@ -50,7 +50,7 @@ export default async function setupFelfire() {
       }
     };
 
-    fs.writeFileSync(path.join(process.cwd(), './felfire.yml'), yaml.safeDump(felfireConfig));
+    fs.writeFileSync(path.join(process.cwd(), './windfury.yml'), yaml.safeDump(windfuryConfig));
 
     resolve();
   });

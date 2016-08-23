@@ -9,14 +9,14 @@ import deployToEB from './tasks/deployToEB';
 import setup from './tasks/setup';
 import setupBabel from './tasks/setupBabel';
 import setupESLint from './tasks/setupESLint';
-import setupFelfire from './tasks/setupFelfire';
+import setupWindfury from './tasks/setupWindfury';
 
 const {version} = require(path.join(__dirname, '../package.json'));
 
 commander
   .version(version)
-  .option('-e, --env-file <envFile>', 'the .env file Felfire will use to compile the app (default: ./env/.env.dev).')
-  .option('-n, --eb-env <ebEnv>', 'the AWS environment name that Felfire must deploys to.');
+  .option('-e, --env-file <envFile>', 'the .env file Windfury will use to compile the app (default: ./env/.env.dev).')
+  .option('-n, --eb-env <ebEnv>', 'the AWS environment name that Windfury must deploys to.');
 commander
   .command('start')
   .action(() => {
@@ -47,15 +47,15 @@ commander
   .command('setup:eslint')
   .action(() => run(setupESLint));
 commander
-  .command('setup:felfire')
-  .action(() => run(setupFelfire));
+  .command('setup:windfury')
+  .action(() => run(setupWindfury));
 commander
   .command('setup')
   .action(() => run(setup));
 commander
   .command('*')
   .action(() => {
-    throw new Error('Unknown Felfire task. See all available commands in the documentation: ' +
-      'https://github.com/mapleinside/felfire#commands');
+    throw new Error('Unknown Windfury task. See all available commands in the documentation: ' +
+      'https://github.com/mapleinside/windfury#commands');
   });
 commander.parse(process.argv);

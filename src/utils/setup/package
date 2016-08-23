@@ -3,11 +3,11 @@
   "version": "1.0.0-alpha.1",
   "description": "Centralized authentication web app for the Unleash product.",
   "scripts": {
-    "start": "felfire start",
+    "start": "windfury start",
     "test": "mocha --require ./bin/test './src/**/test/**/*.js' && eslint ./",
     "test:coverage": "nyc mocha --require ./bin/test './src/**/test/**/*.js'",
-    "build-prod": "felfire build --env-file=./env/prod.env",
-    "deploy-prod": "felfire deploy:eb --eb-env=my-felfire-app-staging --env-file=./env/prod.env"
+    "build-prod": "windfury build --env-file=./env/prod.env",
+    "deploy-prod": "windfury deploy:eb --eb-env=my-windfury-app-staging --env-file=./env/prod.env"
   },
   "devDependencies": {
     "babel-eslint": "^6.0.2",
@@ -24,7 +24,7 @@
     "eslint-plugin-babel": "^3.1.0",
     "eslint-plugin-react": "^4.2.3",
     "estraverse-fb": "^1.3.1",
-    "felfire": "1.0.0-alpha.35",
+    "windfury": "1.0.0-alpha.35",
     "material-colors": "^1.0.0",
     "mocha": "^2.4.5",
     "mocha-lcov-reporter": "^1.2.0",

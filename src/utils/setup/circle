@@ -29,7 +29,7 @@ deployment:
   elasticbeanstalk:
     branch: staging
     commands:
-      - docker build -t felfire/my-felfire-app:$CIRCLE_BRANCH-$CIRCLE_SHA1 .
+      - docker build -t windfury/my-windfury-app:$CIRCLE_BRANCH-$CIRCLE_SHA1 .
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASSWORD
       - docker push mapleinside/unleash-auth-web-app:$CIRCLE_BRANCH-$CIRCLE_SHA1
       - npm i --only=dev

@@ -6,10 +6,10 @@ import fs from 'fs-extra';
 let config = null;
 
 try {
-  config = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), './felfire.yml')));
+  config = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), './windfury.yml')));
 } catch (err) {
-  throw new Error('FILE NOT FOUND ERROR: \'felfire.yml\' missing. Please specify a Felfire\'s configuration. ' +
-    'See more information: https://github.com/mapleinside/felfire.');
+  throw new Error('FILE NOT FOUND ERROR: \'windfury.yml\' missing. Please specify a Windfury\'s configuration. ' +
+    'See more information: https://github.com/mapleinside/windfury.');
 }
 
 export const isProduction = process.env.NODE_ENV === 'production';
