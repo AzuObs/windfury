@@ -45,9 +45,9 @@ windfury start
 
 For best use, commands should be defined into the [package.json](https://docs.npmjs.com/files/package.json) as NPM scripts.
 
-* `felfire start`: spin up a development server with live-reload and [HMR](http://webpack.github.io/docs/hot-module-replacement.html);
-* `felfire build`: build a production-ready version of the website;
-* `felfire deploy`: deploy your website sources to the specified [AWS S3](http://docs.aws.amazon.com/AmazonS3/latest/dev/Welcome.html) bucket.
+* `windfury start`: spin up a development server with live-reload and [HMR](http://webpack.github.io/docs/hot-module-replacement.html);
+* `windfury build`: build a production-ready version of the website;
+* `windfury deploy`: deploy your website sources to the specified [AWS S3](http://docs.aws.amazon.com/AmazonS3/latest/dev/Welcome.html) bucket.
 
 ### Commands arguments
 
