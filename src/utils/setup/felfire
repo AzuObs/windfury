@@ -1,0 +1,19 @@
+aws:
+  region: us-west-2
+  eb:
+    app: unleash-auth-web-app
+  s3:
+    eb:
+      bucket: elasticbeanstalk-us-west-2-123456789
+    static:
+      bucket: static.mapleinside.com/unleash/auth-web-app
+docker:
+  image: mapleinside/unleash-auth-web-app
+env:
+  secret:
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - NPM_TOKEN
+    - NEW_RELIC_LICENSE_KEY
+    - GOOGLE_OAUTH2_CLIENT_ID
+    - GOOGLE_OAUTH2_CLIENT_SECRET

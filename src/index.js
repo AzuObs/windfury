@@ -1,49 +1,61 @@
-import commander from 'commander';
-import fs from 'fs';
-import logatim from 'logatim';
 import path from 'path';
-import yaml from 'js-yaml';
-import _ from 'lodash';
+import commander from 'commander';
 
+import run from './helpers/run';
 import watch from './tasks/watch';
-// import build from './tasks/build';
-import createConfig from './helpers/createConfig';
-import createDevConfig from './helpers/createDevConfig';
+import build from './tasks/build';
+import deployStatic from './tasks/deployStatic';
+import deployToEB from './tasks/deployToEB';
+import setup from './tasks/setup';
+import setupBabel from './tasks/setupBabel';
+import setupESLint from './tasks/setupESLint';
+import setupFelfire from './tasks/setupFelfire';
 
-const logatimLevel = commander.debug ? 'debug' : 'info';
-const configFileName = 'windfury.yml';
-const devConfigFileName = 'windfury-dev.yml';
-const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json')));
-
-let config = {};
-let customConfig = {};
-let devCustomConfig = {};
-
-logatim.setLevel(logatimLevel);
-
-try {
-  customConfig = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), `./${configFileName}`), 'utf8'));
-} catch (err) {
-  throw new Error(err);
-}
-
-try {
-  fs.statSync(path.join(process.cwd(), `./${devConfigFileName}`)).isFile();
-  devCustomConfig = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), `./${devConfigFileName}`), 'utf8'));
-} catch (err) {
-  logatim.info(`No ${devConfigFileName} found. Using default development configuration.`);
-}
-
-config = _.assign(createConfig(customConfig), createDevConfig(devCustomConfig));
+const {version} = require(path.join(__dirname, '../package.json'));
 
 commander
-  .version(packageJson.version)
-  .option('-d --deploy', 'Enable sources deployment.')
-  .option('-de --debug', 'Enable debug logs.');
+  .version(version)
+  .option('-e, --env-file <envFile>', 'the .env file Felfire will use to compile the app (default: ./env/.env.dev).')
+  .option('-n, --eb-env <ebEnv>', 'the AWS environment name that Felfire must deploys to.');
 commander
-  .command('watch')
-  .action(() => watch(config));
-// commander
-//   .command('build')
-//   .action(() => build(config, commander.deploy));
+  .command('start')
+  .action(() => {
+    run(watch, {
+      envFile: commander.envFile
+    });
+  });
+commander
+  .command('build')
+  .action(() =>
+    run(build, {
+      envFile: commander.envFile
+    }));
+commander
+  .command('deploy:static')
+  .action(() => run(deployStatic));
+commander
+  .command('deploy:eb')
+  .action(() =>
+    run(deployToEB, {
+      envFile: commander.envFile,
+      AWSEBEnv: commander.ebEnv
+    }));
+commander
+  .command('setup:babel')
+  .action(() => run(setupBabel));
+commander
+  .command('setup:eslint')
+  .action(() => run(setupESLint));
+commander
+  .command('setup:felfire')
+  .action(() => run(setupFelfire));
+commander
+  .command('setup')
+  .action(() => run(setup));
+commander
+  .command('*')
+  .action(() => {
+    throw new Error('Unknown Felfire task. See all available commands in the documentation: ' +
+      'https://github.com/mapleinside/felfire#commands');
+  });
 commander.parse(process.argv);

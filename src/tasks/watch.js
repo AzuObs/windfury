@@ -1,78 +1,67 @@
 import webpack from 'webpack';
-import path from 'path';
-import browserSync from 'browser-sync';
-import webpackDevMiddleware from 'webpack-dev-middleware';
+import BrowserSync from 'browser-sync';
+import webpackMiddleware from 'webpack-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
-import hygienistMiddleware from 'hygienist-middleware';
-import logatim from 'logatim';
-import reactRouterToArray from 'react-router-to-array';
 
-import createDevConfig from '../webpack/createDevConfig';
-import requireCreateRoutesModule from '../helpers/requireCreateRoutesModule';
-
-// const createRoutesFilePath = path.join(process.cwd(), './src/helpers/createRoutes');
+import runServer from '../helpers/runServer';
+import run from '../helpers/run';
+import copy from './copy';
+import clean from './clean';
 
 /**
- * Run development build then watch for file changes.
+ * Run a development server then watch for files changes using live-reload and HMR.
  *
- * @param {Object} config
- * @param {Boolean} watchRouter
+ * @param {Object} options
+ * @returns {Promise}
  */
-function watch(config, watchRouter = true) {
-  const routes = requireCreateRoutesModule();
-  const browserSyncServer = browserSync.create();
-  const paths = reactRouterToArray(routes);
-  const webpackConfig = createDevConfig(config, paths);
-  const compiler = webpack(webpackConfig);
-  const browserSyncServerOpts = {
-    open: config.openOnStart,
-    port: config.server.port,
-    server: {
-      baseDir: path.join(process.cwd(), config.distPath),
-      middleware: [
-        hygienistMiddleware(path.join(process.cwd(), config.distPath)),
-        webpackDevMiddleware(compiler, {
-          contentBase: `http://localhost:${config.server.port}`,
-          publicPath: webpackConfig.output.publicPath,
-          noInfo: true,
-          hot: true,
-          inline: true,
-          lazy: false,
-          stats: {
-            colors: true
-          },
-          headers: {
-            'Access-Control-Allow-Origin': '*'
-          }
-        }),
-        webpackHotMiddleware(compiler)
-      ]
-    },
-    ui: {
-      port: config.server.uiPort
-    },
-    files: [
-      path.join(process.cwd(), `./${config.distPath}/**/*.html`),
-      path.join(process.cwd(), `./${config.distPath}/**/*.css`)
-    ]
-  };
+export default async function watch(options) {
+  const {appPort} = require('../utils/Config');
+  const setWebpackDevConfig = require('../webpack/setDevConfig').default;
+  const webpackConfig = setWebpackDevConfig(options);
 
-  return browserSyncServer.init(browserSyncServerOpts, () => {
-    logatim.info('Development server is running.');
+  await run(clean);
+  await run(copy);
+  await new Promise(resolve => {
+    const bundler = webpack(webpackConfig);
+    const webpackMiddlewareInstance = webpackMiddleware(bundler, {
+      publicPath: webpackConfig[0].output.publicPath,
+      stats: webpackConfig[0].stats
+    });
+    const hotMiddleWares = bundler
+      .compilers
+      .filter(compiler => compiler.options.target !== 'node')
+      .map(compiler => webpackHotMiddleware(compiler));
 
-    if (watchRouter) {
-      browserSyncServer.watch(path.join(process.cwd(), `${config.srcPath}/helpers/createRoutes.js`), event => {
-        if (event === 'change') {
-          delete require.cache[require.resolve(createRoutesFilePath)];
+    let handleServerBundleComplete = () => {
+      runServer((err, host) => {
+        if (!err) {
+          const bs = BrowserSync.create();
 
-          logatim.info('Restart Windfury...');
+          bs.init({
+            ui: {
+              port: appPort + 2
+            },
+            port: appPort + 1,
+            proxy: {
+              target: host,
+              middleware: [webpackMiddlewareInstance, ...hotMiddleWares]
+            },
+            files: []
+          });
+          handleServerBundleComplete = runServer;
 
-          browserSyncServer.exit();
-          watch(config, false);
+          process.on('SIGINT', () => {
+            resolve();
+            process.exit();
+            bs.exit();
+          });
         }
       });
-    }
+    };
+
+    bundler
+      .compilers
+      .find(x => x.options.target === 'node')
+      .plugin('done', () => handleServerBundleComplete());
   });
 }
-
-export default watch;

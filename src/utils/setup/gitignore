@@ -1,0 +1,10 @@
+node_modules/
+.idea/
+build/
+coverage/
+.nyc_output/
+.DS_Store
+*.log
+.npmrc
+env/dev.env
+webpack-stats.json

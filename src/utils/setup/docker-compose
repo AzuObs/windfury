@@ -1,0 +1,49 @@
+bff:
+  image: node:6.3.0
+  command: nnpm start
+  working_dir: /usr/src/app
+  ports:
+    - "3000:3000"
+  volumes:
+    - ./:/usr/src/app
+  env_file: ./env/dev.env
+
+start:
+  extends:
+    service: bff
+  links:
+    - redis
+test:
+  extends:
+    service: bff
+  command: npm test
+  links:
+    - redis
+
+staging:
+  extends:
+    service: bff
+  env_file: ./env/staging.env
+  environment:
+    AWS_ACCESS_KEY_ID:
+    AWS_SECRET_ACCESS_KEY:
+    NPM_TOKEN:
+    NEW_RELIC_LICENSE_KEY:
+    GOOGLE_OAUTH2_CLIENT_ID:
+    GOOGLE_OAUTH2_CLIENT_SECRET:
+  volumes:
+    - ./build:/usr/src/app
+staging_start:
+  extends:
+    service: staging
+  links:
+    - redis
+staging_test:
+  extends:
+    service: staging
+  command: npm test
+  links:
+    - redis
+
+redis:
+  image: redis

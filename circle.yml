@@ -1,0 +1,16 @@
+general:
+  branches:
+    only:
+      - master
+
+machine:
+  node:
+    version: 6.3.0
+
+dependencies:
+  override:
+    - npm i
+
+test:
+  override:
+    - npm test

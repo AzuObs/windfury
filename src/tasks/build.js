@@ -1,26 +1,20 @@
-import fs from 'fs';
-import path from 'path';
-import extractRoutePaths from '../helpers/extractRoutePaths';
-import copyBoilerplates from '../helpers/copyBoilerplates';
-import buildWithLocales from '../helpers/buildWithLocales';
+import webpack from 'webpack';
+
+import run from '../helpers/run';
+import copy from './copy';
+import clean from './clean';
 
 /**
- * Run the production build.
+ * Build production-ready sources.
  *
- * @param {Object} config
- * @param {Boolean} hasDeployment
+ * @param {Object} options
+ * @returns {Promise}
  */
-export default function(config, hasDeployment = false) {
-  return extractRoutePaths(config, paths => {
-    copyBoilerplates(config);
-    fs.writeFileSync(
-      path.join(process.cwd(), config.srcPath, config.buildDirName, './paths.json'), JSON.stringify(paths)
-    );
+export default async function build(options) {
+  const setWebpackProdConfig = require('../webpack/setProdConfig').default;
+  const webpackConfig = setWebpackProdConfig(options);
 
-    if (config.locales) {
-      config.locales.map(locale => buildWithLocales(config, paths, hasDeployment, locale));
-    } else {
-      buildWithLocales(config, paths, hasDeployment);
-    }
-  });
+  await run(clean);
+  await run(copy);
+  await new Promise(resolve => webpack(webpackConfig, () => resolve()));
 }

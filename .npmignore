@@ -1,8 +1,11 @@
 .idea/
 src/
-node_modules/
+.cache/
 .babelrc
 .gitignore
 README.md
 .DS_Store
 *.log
+.eslintrc
+.gitattributes
+circle.yml

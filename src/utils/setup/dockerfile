@@ -1,0 +1,6 @@
+FROM node:6.3.0
+
+WORKDIR /usr/src/app
+ADD ./build /usr/src/app
+
+CMD [ "node", "./" ]

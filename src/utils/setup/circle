@@ -1,0 +1,37 @@
+general:
+  branches:
+    only:
+      - master
+      - staging
+
+machine:
+  node:
+    version: 6.3.0
+  services:
+    - docker
+
+dependencies:
+  override:
+    - sudo pip install awscli
+    - npm run npmrc
+    - npm i
+
+test:
+  override:
+    - if [ $CIRCLE_BRANCH = 'staging' ]; then docker-compose run staging_test; fi
+    - rm -rf ./node_modules
+    - npm i --only=prod
+    - npm run build
+    - if [ $CIRCLE_BRANCH = 'staging' ]; then docker-compose run -d --service-ports staging_start; sleep 10; fi
+    - curl --retry 10 --retry-delay 5 -v http://localhost:5000
+
+deployment:
+  elasticbeanstalk:
+    branch: staging
+    commands:
+      - docker build -t felfire/my-felfire-app:$CIRCLE_BRANCH-$CIRCLE_SHA1 .
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - docker push mapleinside/unleash-auth-web-app:$CIRCLE_BRANCH-$CIRCLE_SHA1
+      - npm i --only=dev
+      - npm run deploy:static
+      - npm run deploy:eb
