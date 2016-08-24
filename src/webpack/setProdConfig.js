@@ -1,12 +1,13 @@
 import path from 'path';
 import webpack from 'webpack';
-import AssetsPlugin from 'assets-webpack-plugin';
 import autoprefixer from 'autoprefixer';
-import nodeExternals from 'webpack-node-externals';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import fs from 'fs-extra';
+import StaticSiteGeneratorPlugin from 'static-site-generator-webpack-plugin';
+import reactRouterToArray from 'react-router-to-array';
 
 import resolveEnvConfig from '../helpers/resolveEnvConfig';
+import requireCreateRoutesModule from '../helpers/requireCreateRoutesModule';
 import * as windfuryConfig from '../utils/Config';
 
 const HotModuleReplacementPlugin = webpack.HotModuleReplacementPlugin;
@@ -25,16 +26,27 @@ const babelRc = JSON.parse(fs.readFileSync(path.join(process.cwd(), './.babelrc'
  * @returns {[]}
  */
 export default function(options = {}) {
+  const createRoutes = requireCreateRoutesModule();
+  const paths = reactRouterToArray(createRoutes());
   const definePluginConfig = options.envFile ? resolveEnvConfig({
     envFile: options.envFile,
     stringify: true
   }) : resolveEnvConfig({
     stringify: true
   });
-  const config = {
+
+  return {
     context: process.cwd(),
+    entry: {
+      app: [path.join(process.cwd(), './src/client.js')],
+      async: [path.join(process.cwd(), './src/async.js')]
+    },
     output: {
-      publicPath: windfuryConfig.cdnEndpoint
+      publicPath: windfuryConfig.cdnEndpoint,
+      path: path.join(process.cwd(), './build'),
+      chunkFilename: '[name]-[chunkhash].js',
+      filename: '[name]-[hash].js',
+      libraryTarget: 'umd'
     },
     module: {
       loaders: [
@@ -63,54 +75,7 @@ export default function(options = {}) {
             'image-webpack?{progressive:true,optimizationLevel:7,interlaced:false,pngquant:' +
             '{quality:"65-90",speed:4}}'
           ]
-        }
-      ]
-    },
-    resolve: {
-      root: process.cwd(),
-      alias: {
-        'isomorphic-fetch': path.join(process.cwd(), './node_modules/isomorphic-fetch'),
-        'whatwg-fetch': path.join(process.cwd(), './node_modules/whatwg-fetch'),
-        newrelic: path.join(process.cwd(), './node_modules/newrelic'),
-        'server-module': path.join(process.cwd(), './src'),
-        'client-module': path.join(process.cwd(), './src/client.js'),
-        'async-module': path.join(process.cwd(), './src/async.js')
-      },
-      modulesDirectories: ['node_modules', 'src'],
-      extensions: ['', '.js', '.json'],
-      unsafeCache: true,
-      fallback: path.join(__dirname, '../../node_modules')
-    },
-    resolveLoader: {
-      root: __dirname,
-      modulesDirectories: ['node_modules'],
-      fallback: path.join(__dirname, '../../node_modules')
-    },
-    plugins: [
-      new UglifyJsPlugin({
-        comments: false,
-        compress: {
-          warnings: false
-        }
-      })
-    ]
-  };
-  const clientConfig = {
-    context: config.context,
-    target: 'web',
-    name: 'client',
-    entry: {
-      app: [path.join(process.cwd(), './src/client.js')],
-      async: [path.join(process.cwd(), './src/async.js')]
-    },
-    output: {
-      ...config.output,
-      path: path.join(process.cwd(), './build'),
-      chunkFilename: '[name]-[chunkhash].js',
-      filename: '[name]-[hash].js'
-    },
-    module: {
-      loaders: config.module.loaders.concat([
+        },
         {
           test: /\.css$/,
           exclude: /node_modules/,
@@ -134,7 +99,7 @@ export default function(options = {}) {
             ]
           )
         }
-      ])
+      ]
     },
     stats: {
       colors: true,
@@ -146,7 +111,32 @@ export default function(options = {}) {
     node: {
       fs: 'empty'
     },
-    plugins: config.plugins.concat([
+    resolve: {
+      root: process.cwd(),
+      alias: {
+        'isomorphic-fetch': path.join(process.cwd(), './node_modules/isomorphic-fetch'),
+        'whatwg-fetch': path.join(process.cwd(), './node_modules/whatwg-fetch'),
+        'server-module': path.join(process.cwd(), './src'),
+        'client-module': path.join(process.cwd(), './src/client.js'),
+        'async-module': path.join(process.cwd(), './src/async.js')
+      },
+      modulesDirectories: ['node_modules', 'src'],
+      extensions: ['', '.js', '.json'],
+      unsafeCache: true,
+      fallback: path.join(__dirname, '../../node_modules')
+    },
+    resolveLoader: {
+      root: __dirname,
+      modulesDirectories: ['node_modules'],
+      fallback: path.join(__dirname, '../../node_modules')
+    },
+    plugins: [
+      new UglifyJsPlugin({
+        comments: false,
+        compress: {
+          warnings: false
+        }
+      }),
       new OccurenceOrderPlugin(),
       new HotModuleReplacementPlugin(),
       new NoErrorsPlugin(),
@@ -160,61 +150,13 @@ export default function(options = {}) {
         }
       }),
       new AggressiveMergingPlugin(),
-      new AssetsPlugin({
-        path: path.join(process.cwd(), './build')
-      }),
       new ExtractTextPlugin('app-[chunkhash].css', {
         allChunks: true
-      })
-    ]),
+      }),
+      new StaticSiteGeneratorPlugin('app', paths)
+    ],
     postcss: () => [autoprefixer({
       browsers: windfuryConfig.autoprefixerBrowsers
-    })],
-    resolve: config.resolve,
-    resolveLoader: config.resolveLoader
+    })]
   };
-  const serverConfig = {
-    context: config.context,
-    name: 'server',
-    target: 'node',
-    externals: [nodeExternals()],
-    entry: [path.join(process.cwd(), './src/index.js')],
-    output: {
-      ...config.output,
-      path: path.join(process.cwd(), './build'),
-      filename: 'index.js',
-      libraryTarget: 'commonjs2'
-    },
-    module: {
-      loaders: config.module.loaders.concat([
-        {
-          test: /\.css$/,
-          include: path.join(process.cwd(), './src'),
-          loader: 'css/locals?modules&importLoaders=1&localIdentName=_[local]_[hash:base64:5]'
-        },
-        {
-          test: /\.scss$/,
-          include: path.join(process.cwd(), './src'),
-          loaders: [
-            'css/locals?modules&importLoaders=1&localIdentName=_[local]_[hash:base64:5]',
-            'sass?outputStyle=expanded'
-          ]
-        }
-      ])
-    },
-    resolve: config.resolve,
-    resolveLoader: config.resolveLoader,
-    plugins: config.plugins.concat([
-      new DefinePlugin({
-        'process.env': {
-          ...definePluginConfig,
-          windfury: JSON.stringify(windfuryConfig),
-          isClient: JSON.stringify(false),
-          isServer: JSON.stringify(true)
-        }
-      })
-    ])
-  };
-
-  return [clientConfig, serverConfig];
 }

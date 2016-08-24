@@ -15,15 +15,10 @@ try {
 export const isProduction = process.env.NODE_ENV === 'production';
 export const AWSAccessKeyId = process.env.AWS_ACCESS_KEY_ID || null;
 export const AWSSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || null;
-export const newRelicAppName = process.env.NEW_RELIC_APP_NAME || null;
-export const newRelicLicenseKey = process.env.NEW_RELIC_LICENSE_KEY || null;
 export const appPort = parseInt(process.env.APP_PORT, 10) || 3000;
 
 export const AWSRegion = _.hasIn(config, 'aws.region') ? config.aws.region : null;
-export const AWSEBBucket = _.hasIn(config, 'aws.s3.eb.bucket') ? config.aws.s3.eb.bucket : null;
-export const AWSEBApp = _.hasIn(config, 'aws.eb.app') ? config.aws.eb.app : null;
-export const AWSS3StaticBucket = _.hasIn(config, 'aws.s3.static.bucket') ? config.aws.s3.static.bucket : null;
-export const dockerImage = _.hasIn(config, 'docker.image') ? config.docker.image : null;
+export const AWSS3Bucket = _.hasIn(config, 'aws.s3.bucket') ? config.aws.s3.bucket : null;
 export const encryptedEnv = _.hasIn(config, 'env.secret') ? config.env.secret : [];
 export const autoprefixerBrowsers = _.hasIn(config, 'autoprefixer.browsers') ? config.autoprefixer.browsers : [
   'Android 2.3',
@@ -35,6 +30,6 @@ export const autoprefixerBrowsers = _.hasIn(config, 'autoprefixer.browsers') ? c
   'Opera >= 12',
   'Safari >= 7.1'
 ];
-export const cdnEndpoint = _.hasIn(config, 'cdn.endpoint') ? config.cdn.endpoint : '/client/';
+export const cdnEndpoint = _.hasIn(config, 'cdn.endpoint') ? config.cdn.endpoint : '/';
 export const gtmID = _.hasIn(config, 'gtm.id') ? config.gtm.id : null;
 export const forceGTM = _.hasIn(config, 'gtm.force') ? config.gtm.force : false;

@@ -17,14 +17,8 @@ async function compress() {
     const algorithm = zlib.gzip;
     const assetsDir = path.join(process.cwd(), './build');
 
-    recursive(assetsDir, [
-      '*.{css,js,txt,xml,ico}',
-      'package.json',
-      'webpack-assets.json',
-      'index.js',
-      'node_modules'
-    ], (nonCompressibleErr, nonCompressibleFiles) => {
-      recursive(assetsDir, ['!*.{css,js}', 'index.js', 'node_modules'], (compressibleErr, compressibleFiles) => {
+    recursive(assetsDir, ['*.{css,js,txt,xml,ico,html}'], (nonCompressibleErr, nonCompressibleFiles) => {
+      recursive(assetsDir, ['!*.{css,js,html}'], (compressibleErr, compressibleFiles) => {
         const compressedFiles = [];
         const toCompressFiles = _.clone(compressedFiles);
 
@@ -72,8 +66,8 @@ async function compress() {
 /**
  * Run the deployment to AWS S3.
  */
-export default function deployStatic() {
-  const {AWSAccessKeyId, AWSSecretAccessKey, AWSS3StaticBucket, AWSRegion} = require('../utils/Config');
+export default function deploy() {
+  const {AWSAccessKeyId, AWSSecretAccessKey, AWSS3Bucket, AWSRegion} = require('../utils/Config');
 
   if (!AWSAccessKeyId || !AWSSecretAccessKey) {
     throw new Error(
@@ -82,8 +76,8 @@ export default function deployStatic() {
     );
   }
 
-  if (!AWSS3StaticBucket || !AWSRegion) {
-    throw new Error('Missing \'aws.s3.static.bucket\' and/or \'aws.region\' properties in \'windfury.yml\'.');
+  if (!AWSS3Bucket || !AWSRegion) {
+    throw new Error('Missing \'aws.s3.bucket\' and/or \'aws.region\' properties in \'windfury.yml\'.');
   }
 
   return new Promise(async resolve => {
@@ -100,14 +94,14 @@ export default function deployStatic() {
       }
     });
     const defaultS3Params = {
-      Bucket: AWSS3StaticBucket
+      Bucket: AWSS3Bucket
     };
     const compressed = await compress();
 
     if (compressed.assetsFiles.length > 0) {
-      log.white('Deploying to ').blue(AWSS3StaticBucket).white('.').info();
+      log.white('Deploying to ').blue(AWSS3Bucket).white('.').info();
     } else {
-      log.yellow('No static assets found. Skipping deployment.').info();
+      log.yellow('No sources found. Skipping deployment.').info();
     }
 
     compressed.assetsFiles.map(file => {

@@ -4,8 +4,7 @@ import commander from 'commander';
 import run from './helpers/run';
 import watch from './tasks/watch';
 import build from './tasks/build';
-import deployStatic from './tasks/deployStatic';
-import deployToEB from './tasks/deployToEB';
+import deploy from './tasks/deploy';
 import setup from './tasks/setup';
 import setupBabel from './tasks/setupBabel';
 import setupESLint from './tasks/setupESLint';
@@ -31,15 +30,8 @@ commander
       envFile: commander.envFile
     }));
 commander
-  .command('deploy:static')
-  .action(() => run(deployStatic));
-commander
-  .command('deploy:eb')
-  .action(() =>
-    run(deployToEB, {
-      envFile: commander.envFile,
-      AWSEBEnv: commander.ebEnv
-    }));
+  .command('deploy')
+  .action(() => run(deploy));
 commander
   .command('setup:babel')
   .action(() => run(setupBabel));
