@@ -66,8 +66,10 @@ async function compress() {
 /**
  * Run the deployment to AWS S3.
  */
-export default function deploy() {
+export default function deploy({environment = 'prod'} = {environment: 'prod'}) {
   const {AWSAccessKeyId, AWSSecretAccessKey, AWSS3Bucket, AWSRegion} = require('../utils/Config');
+
+  let bucket = _.clone(AWSS3Bucket);
 
   if (!AWSAccessKeyId || !AWSSecretAccessKey) {
     throw new Error(
@@ -78,6 +80,10 @@ export default function deploy() {
 
   if (!AWSS3Bucket || !AWSRegion) {
     throw new Error('Missing \'aws.s3.bucket\' and/or \'aws.region\' properties in \'windfury.yml\'.');
+  }
+
+  if (environment === 'staging') {
+    bucket = bucket.indexOf('www.') > -1 ? bucket.replace('www.', 'staging.') : `staging.${bucket}`;
   }
 
   return new Promise(async resolve => {

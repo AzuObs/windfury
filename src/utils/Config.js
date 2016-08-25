@@ -33,3 +33,4 @@ export const autoprefixerBrowsers = _.hasIn(config, 'autoprefixer.browsers') ? c
 export const cdnEndpoint = _.hasIn(config, 'cdn.endpoint') ? config.cdn.endpoint : '/';
 export const gtmID = _.hasIn(config, 'gtm.id') ? config.gtm.id : null;
 export const forceGTM = _.hasIn(config, 'gtm.force') ? config.gtm.force : false;
+export const locales = _.hasIn(config, 'locales') ? config.locales : ['en'];

@@ -26,8 +26,7 @@ const babelRc = JSON.parse(fs.readFileSync(path.join(process.cwd(), './.babelrc'
  * @returns {[]}
  */
 export default function(options = {}) {
-  const createRoutes = requireCreateRoutesModule();
-  const paths = reactRouterToArray(createRoutes());
+  const paths = reactRouterToArray(requireCreateRoutesModule());
   const definePluginConfig = options.envFile ? resolveEnvConfig({
     envFile: options.envFile,
     stringify: true
@@ -144,9 +143,10 @@ export default function(options = {}) {
       new DefinePlugin({
         'process.env': {
           ...definePluginConfig,
-          windfury: JSON.stringify(windfuryConfig),
-          isClient: JSON.stringify(false),
-          isServer: JSON.stringify(true)
+          WINDFURY: JSON.stringify(windfuryConfig),
+          IS_CLIENT: JSON.stringify(false),
+          IS_SERVER: JSON.stringify(true),
+          LOCALE: JSON.stringify(options.locale)
         }
       }),
       new AggressiveMergingPlugin(),

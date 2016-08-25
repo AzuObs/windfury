@@ -1,6 +1,6 @@
 if (module.hot) module.hot.accept();
 
-const {gtmID, isProduction, forceGTM} = process.env.windfury;
+const {gtmID, isProduction, forceGTM} = process.env.WINDFURY;
 
 function generateGTMSnippet(w, d, s, l, i) {
   const mutableW = w;

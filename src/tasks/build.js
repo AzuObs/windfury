@@ -3,6 +3,7 @@ import webpack from 'webpack';
 import run from '../helpers/run';
 import copy from './copy';
 import clean from './clean';
+import {locales} from '../utils/Config';
 
 /**
  * Build production-ready sources.
@@ -12,9 +13,23 @@ import clean from './clean';
  */
 export default async function build(options) {
   const setWebpackProdConfig = require('../webpack/setProdConfig').default;
-  const webpackConfig = setWebpackProdConfig(options);
 
   await run(clean);
   await run(copy);
-  await new Promise(resolve => webpack(webpackConfig, () => resolve()));
+  await new Promise(resolve => {
+    let resolvedCount = 0;
+
+    locales.map(locale => {
+      const webpackConfig = setWebpackProdConfig({
+        ...options,
+        locale
+      });
+
+      return webpack(webpackConfig, () => {
+        resolvedCount++;
+
+        if (resolvedCount === locales.length) resolve();
+      });
+    });
+  });
 }
