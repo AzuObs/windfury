@@ -27,7 +27,8 @@ commander
   .command('build')
   .action(() =>
     run(build, {
-      envFile: commander.envFile
+      envFile: commander.envFile,
+      isBuild: true
     }));
 commander
   .command('deploy')

@@ -15,7 +15,9 @@ export default async function build(options) {
   const setWebpackProdConfig = require('../webpack/setProdConfig').default;
 
   await run(clean);
-  await run(copy);
+  await run(copy, {
+    isBuild: options.isBuild
+  });
   await new Promise(resolve => {
     let resolvedCount = 0;
 

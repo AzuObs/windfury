@@ -42,7 +42,7 @@ export default function(options = {}) {
     },
     output: {
       publicPath: windfuryConfig.cdnEndpoint,
-      path: path.join(process.cwd(), './build'),
+      path: path.join(process.cwd(), './build', options.locale),
       chunkFilename: '[name]-[chunkhash].js',
       filename: '[name]-[hash].js',
       libraryTarget: 'umd'
