@@ -156,9 +156,9 @@ export default function(options = {}) {
       new DefinePlugin({
         'process.env': {
           ...definePluginConfig,
-          windfury: JSON.stringify(windfuryConfig),
-          isClient: JSON.stringify(true),
-          isServer: JSON.stringify(false)
+          WINDFURY: JSON.stringify(windfuryConfig),
+          IS_CLIENT: JSON.stringify(true),
+          IS_SERVER: JSON.stringify(false)
         }
       }),
       new AggressiveMergingPlugin(),
