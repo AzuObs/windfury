@@ -213,9 +213,9 @@ export default function(options = {}) {
       new DefinePlugin({
         'process.env': {
           ...definePluginConfig,
-          windfury: JSON.stringify(windfuryConfig),
-          isClient: JSON.stringify(false),
-          isServer: JSON.stringify(true)
+          WINDFURY: JSON.stringify(windfuryConfig),
+          IS_CLIENT: JSON.stringify(false),
+          IS_SERVER: JSON.stringify(true)
         }
       })
     ],
