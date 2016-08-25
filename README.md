@@ -23,7 +23,7 @@ Windfury is a full-featured and opinionated tooling library. It's mainly focused
 
 ## Quick Start
 
-Let's start by create a new Node.js project. Windfury works great with the following boilerplates: [mapleinside/website-boilerplate](https://github.com/mapleinside/website-boilerplate).
+Let's start by create a new Node.js project. Windfury works great with the following boilerplate: [mapleinside/website-boilerplate](https://github.com/mapleinside/website-boilerplate).
 
 However, if you want to start from scratch, Windfury is opinionated by nature, so you should follow Maple Inside's architecture conventions in order to use it.
 When you're ready to go, install Windfury as local dependency:
