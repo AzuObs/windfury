@@ -1,8 +1,6 @@
 import path from 'path';
 import fs from 'fs-extra';
 
-import {locales} from '../utils/Config';
-
 /**
  * Copy non-versionable static sources to build directory.
  *
@@ -11,6 +9,8 @@ import {locales} from '../utils/Config';
  * @returns {Promise}
  */
 export default function copy(isBuild = false) {
+  const {locales} = require('../utils/Config');
+
   return new Promise(resolve => {
     const srcFiles = [
       './favicon.ico',

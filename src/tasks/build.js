@@ -3,7 +3,6 @@ import webpack from 'webpack';
 import run from '../helpers/run';
 import copy from './copy';
 import clean from './clean';
-import {locales} from '../utils/Config';
 
 /**
  * Build production-ready sources.
@@ -12,6 +11,7 @@ import {locales} from '../utils/Config';
  * @returns {Promise}
  */
 export default async function build(options) {
+  const {locales} = require('../utils/Config');
   const setWebpackProdConfig = require('../webpack/setProdConfig').default;
 
   await run(clean);

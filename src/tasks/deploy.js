@@ -67,7 +67,7 @@ async function compress() {
  * Run the deployment to AWS S3.
  */
 export default function deploy({environment = 'prod'} = {environment: 'prod'}) {
-  const {AWSAccessKeyId, AWSSecretAccessKey, AWSS3Bucket, AWSRegion} = require('../utils/Config');
+  const {AWSAccessKeyId, AWSSecretAccessKey, AWSS3Bucket, AWSRegion, locales} = require('../utils/Config');
 
   let bucket = _.clone(AWSS3Bucket);
 
@@ -82,67 +82,85 @@ export default function deploy({environment = 'prod'} = {environment: 'prod'}) {
     throw new Error('Missing \'aws.s3.bucket\' and/or \'aws.region\' properties in \'windfury.yml\'.');
   }
 
-  if (environment === 'staging') {
-    bucket = bucket.indexOf('www.') > -1 ? bucket.replace('www.', 'staging.') : `staging.${bucket}`;
-  }
-
   return new Promise(async resolve => {
-    const client = s3.createClient({
-      maxAsyncS3: 20,
-      s3RetryCount: 3,
-      s3RetryDelay: 1000,
-      multipartUploadThreshold: 20971520,
-      multipartUploadSize: 15728640,
-      s3Options: {
-        accessKeyId: AWSAccessKeyId,
-        secretAccessKey: AWSSecretAccessKey,
-        region: AWSRegion
+    let resolvedCount = 0;
+
+    locales.map(async locale => {
+      if (environment === 'staging' && locales.indexOf(locale) === 1) {
+        bucket = bucket.indexOf('www.') > -1 ? bucket.replace('www.', 'staging.') : `staging.${bucket}`;
       }
-    });
-    const defaultS3Params = {
-      Bucket: AWSS3Bucket
-    };
-    const compressed = await compress();
 
-    if (compressed.assetsFiles.length > 0) {
-      log.white('Deploying to ').blue(AWSS3Bucket).white('.').info();
-    } else {
-      log.yellow('No sources found. Skipping deployment.').info();
-    }
+      if (environment === 'staging' && locales.indexOf(locale) > 1) {
+        bucket = bucket.indexOf('www.') > -1 ?
+          bucket.replace('www.', `staging.${locale}.`) :
+          `staging.${locale}.${bucket}`;
+      }
 
-    compressed.assetsFiles.map(file => {
-      const params = {
-        s3Params: JSON.parse(JSON.stringify(defaultS3Params))
+      if (environment === 'production' && locales.indexOf(locale) > 1) {
+        bucket = bucket.indexOf('www.') > -1 ? bucket.replace('www.', `${locale}.`) : `${locale}.${bucket}`;
+      }
+
+      const client = s3.createClient({
+        maxAsyncS3: 20,
+        s3RetryCount: 3,
+        s3RetryDelay: 1000,
+        multipartUploadThreshold: 20971520,
+        multipartUploadSize: 15728640,
+        s3Options: {
+          accessKeyId: AWSAccessKeyId,
+          secretAccessKey: AWSSecretAccessKey,
+          region: AWSRegion
+        }
+      });
+      const defaultS3Params = {
+        Bucket: AWSS3Bucket
       };
+      const compressed = await compress();
 
-      const relativeFile = file.replace(path.join(process.cwd(), './build/'), '');
-      const isFileCompressed = compressed.compressedFiles.indexOf(file) > -1;
-
-      params.localFile = path.join(process.cwd(), './build', relativeFile);
-      params.s3Params.Key = relativeFile;
-
-      if (isFileCompressed) params.s3Params.ContentEncoding = 'gzip';
-
-      if (file.match(/\.(css|js|eot|ttf|woff|woff2|png|gif|jpg|svg)$/)) {
-        params.s3Params.CacheControl = 'no-transform, max-age=31536000, s-maxage=31536000';
-        params.s3Params.Expires = new Date(new Date().setYear(new Date().getFullYear() + 1));
-      } else if (file.match(/\.(html)$/)) {
-        params.s3Params.CacheControl = 'no-transform, max-age=60, s-maxage=60';
-        params.s3Params.Expires = new Date(new Date().setMinutes(new Date().getMinutes() + 1));
-      }
-
-      client.uploadFile(params);
-      params.s3Params = JSON.parse(JSON.stringify(defaultS3Params));
-
-      if (isFileCompressed) {
-        log.green(path.basename(file)).white(' is uploaded (gzipped).').info();
+      if (compressed.assetsFiles.length > 0) {
+        log.white('Deploying to ').blue(AWSS3Bucket).white('.').info();
       } else {
-        log.green(path.basename(file)).white(' is uploaded.').info();
+        log.yellow('No sources found. Skipping deployment.').info();
       }
 
-      return file;
-    });
+      compressed.assetsFiles.map(file => {
+        const params = {
+          s3Params: JSON.parse(JSON.stringify(defaultS3Params))
+        };
 
-    return resolve();
+        const relativeFile = file.replace(path.join(process.cwd(), './build/'), '');
+        const isFileCompressed = compressed.compressedFiles.indexOf(file) > -1;
+
+        params.localFile = path.join(process.cwd(), './build', relativeFile);
+        params.s3Params.Key = relativeFile;
+
+        if (isFileCompressed) params.s3Params.ContentEncoding = 'gzip';
+
+        if (file.match(/\.(css|js|eot|ttf|woff|woff2|png|gif|jpg|svg)$/)) {
+          params.s3Params.CacheControl = 'no-transform, max-age=31536000, s-maxage=31536000';
+          params.s3Params.Expires = new Date(new Date().setYear(new Date().getFullYear() + 1));
+        } else if (file.match(/\.(html)$/)) {
+          params.s3Params.CacheControl = 'no-transform, max-age=60, s-maxage=60';
+          params.s3Params.Expires = new Date(new Date().setMinutes(new Date().getMinutes() + 1));
+        }
+
+        client.uploadFile(params);
+        params.s3Params = JSON.parse(JSON.stringify(defaultS3Params));
+
+        if (isFileCompressed) {
+          log.green(path.basename(file)).white(' is uploaded (gzipped).').info();
+        } else {
+          log.green(path.basename(file)).white(' is uploaded.').info();
+        }
+
+        return file;
+      });
+
+      resolvedCount++;
+
+      if (resolvedCount === locales.length) return resolve();
+
+      return locale;
+    });
   });
 }
