@@ -8,7 +8,7 @@ import fs from 'fs-extra';
  *
  * @returns {Promise}
  */
-export default function copy(isBuild = false) {
+export default function copy({isBuild = false} = {isBuild: false}) {
   const {locales} = require('../utils/Config');
 
   return new Promise(resolve => {

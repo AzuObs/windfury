@@ -1,6 +1,6 @@
 {
   "name": "windfury",
-  "version": "1.0.0-alpha.24",
+  "version": "1.0.0-alpha.25",
   "description": "Shamanize your next static website with the most powerful React-based technologies.",
   "scripts": {
     "start": "rm -rf ./lib && concurrently 'cpx './src/**/*.{sh,config}' ./lib/ -w' 'cpx './src/utils/setup/*' ./lib/utils/setup/ -w' 'babel -w ./src -d ./lib'",
