@@ -48,6 +48,7 @@ export default function(options = {}) {
       libraryTarget: 'umd'
     },
     module: {
+      noParse: /node_modules\/json-schema\/lib\/validate\.js/,
       loaders: [
         {
           test: /\.js$/,
@@ -58,7 +59,6 @@ export default function(options = {}) {
         },
         {
           test: /\.json$/,
-          include: path.join(process.cwd(), './src'),
           loader: 'json'
         },
         {
@@ -108,7 +108,9 @@ export default function(options = {}) {
       chunkModules: false
     },
     node: {
-      fs: 'empty'
+      fs: 'empty',
+      net: 'empty',
+      tls: 'empty'
     },
     resolve: {
       root: process.cwd(),

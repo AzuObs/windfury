@@ -58,10 +58,10 @@ export default function(options = {}) {
       publicPath: `http://localhost:${windfuryConfig.appPort + 1}/build/`
     },
     module: {
+      noParse: /node_modules\/json-schema\/lib\/validate\.js/,
       loaders: [
         {
           test: /\.json$/,
-          include: path.join(process.cwd(), './src'),
           loader: 'json'
         },
         {
@@ -109,6 +109,7 @@ export default function(options = {}) {
       filename: '[name]-[hash].js'
     },
     module: {
+      noParse: config.module.noParse,
       loaders: config.module.loaders.concat([
         {
           test: /\.js$/,
@@ -146,7 +147,9 @@ export default function(options = {}) {
       chunkModules: false
     },
     node: {
-      fs: 'empty'
+      fs: 'empty',
+      net: 'empty',
+      tls: 'empty'
     },
     plugins: [
       new OccurenceOrderPlugin(),
@@ -186,6 +189,7 @@ export default function(options = {}) {
       libraryTarget: 'commonjs2'
     },
     module: {
+      noParse: config.module.noParse,
       loaders: config.module.loaders.concat([
         {
           test: /\.js$/,
