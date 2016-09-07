@@ -128,7 +128,7 @@ export default function deploy({env = 'prod'} = {env: 'prod'}) {
           s3Params: JSON.parse(JSON.stringify(defaultS3Params))
         };
 
-        const relativeFile = file.replace(path.join(process.cwd(), './build/'), '');
+        const relativeFile = file.replace(path.join(process.cwd(), './build/', locale), '');
         const isFileCompressed = compressed.compressedFiles.indexOf(file) > -1;
 
         params.localFile = path.join(process.cwd(), './build', relativeFile);
