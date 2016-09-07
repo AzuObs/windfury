@@ -27,7 +27,23 @@ export default async function build(options) {
         locale
       });
 
-      return webpack(webpackConfig, () => {
+      return webpack(webpackConfig[0], () => {
+        resolvedCount++;
+
+        if (resolvedCount === locales.length) resolve();
+      });
+    });
+  });
+  await new Promise(resolve => {
+    let resolvedCount = 0;
+
+    locales.map(locale => {
+      const webpackConfig = setWebpackProdConfig({
+        ...options,
+        locale
+      });
+
+      return webpack(webpackConfig[1], () => {
         resolvedCount++;
 
         if (resolvedCount === locales.length) resolve();

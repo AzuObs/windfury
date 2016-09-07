@@ -1,6 +1,6 @@
 {
   "name": "windfury",
-  "version": "1.0.0-alpha.27",
+  "version": "1.0.0-alpha.28",
   "description": "Shamanize your next static website with the most powerful React-based technologies.",
   "scripts": {
     "start": "rm -rf ./lib && concurrently 'cpx './src/**/*.{sh,config}' ./lib/ -w' 'cpx './src/utils/setup/*' ./lib/utils/setup/ -w' 'babel -w ./src -d ./lib'",
@@ -57,7 +57,7 @@
     "rimraf": "^2.5.4",
     "s3": "^4.4.0",
     "sass-loader": "^3.1.1",
-    "static-site-generator-webpack-plugin": "^2.1.0",
+    "static-site-generator-webpack-plugin": "^3.0.0",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.6",
     "webpack": "^1.13.0",
