@@ -66,7 +66,7 @@ async function compress() {
 /**
  * Run the deployment to AWS S3.
  */
-export default function deploy({environment = 'prod'} = {environment: 'prod'}) {
+export default function deploy({env = 'prod'} = {env: 'prod'}) {
   const {AWSAccessKeyId, AWSSecretAccessKey, AWSS3Bucket, AWSRegion, locales} = require('../utils/Config');
 
   let bucket = _.clone(AWSS3Bucket);
@@ -86,17 +86,17 @@ export default function deploy({environment = 'prod'} = {environment: 'prod'}) {
     let resolvedCount = 0;
 
     locales.map(async locale => {
-      if (environment === 'staging' && locales.indexOf(locale) === 1) {
+      if (env === 'staging' && locales.indexOf(locale) === 1) {
         bucket = bucket.indexOf('www.') > -1 ? bucket.replace('www.', 'staging.') : `staging.${bucket}`;
       }
 
-      if (environment === 'staging' && locales.indexOf(locale) > 1) {
+      if (env === 'staging' && locales.indexOf(locale) > 1) {
         bucket = bucket.indexOf('www.') > -1 ?
           bucket.replace('www.', `staging.${locale}.`) :
           `staging.${locale}.${bucket}`;
       }
 
-      if (environment === 'production' && locales.indexOf(locale) > 1) {
+      if (env === 'production' && locales.indexOf(locale) > 1) {
         bucket = bucket.indexOf('www.') > -1 ? bucket.replace('www.', `${locale}.`) : `${locale}.${bucket}`;
       }
 
