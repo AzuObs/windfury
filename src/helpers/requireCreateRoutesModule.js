@@ -14,9 +14,7 @@ export default function() {
   require('babel-register')(babelRc);
 
   ignoreExtensions.forEach(ignoreExtension => {
-    require.extensions[ignoreExtension] = () => {
-      return true;
-    };
+    require.extensions[ignoreExtension] = () => true;
   });
 
   const createRoutesFilePath = path.join(process.cwd(), './src/helpers/createRoutes');
