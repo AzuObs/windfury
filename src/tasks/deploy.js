@@ -96,7 +96,7 @@ export default function deploy({env = 'prod'} = {env: 'prod'}) {
           `staging.${locale}.${bucket}`;
       }
 
-      if (env === 'production' && locales.indexOf(locale) > 1) {
+      if (env === 'prod' && locales.indexOf(locale) > 1) {
         bucket = bucket.indexOf('www.') > -1 ? bucket.replace('www.', `${locale}.`) : `${locale}.${bucket}`;
       }
 
