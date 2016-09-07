@@ -131,7 +131,7 @@ export default function deploy({env = 'prod'} = {env: 'prod'}) {
         const relativeFile = file.replace(path.join(process.cwd(), './build/', locale), '');
         const isFileCompressed = compressed.compressedFiles.indexOf(file) > -1;
 
-        params.localFile = path.join(process.cwd(), './build', relativeFile);
+        params.localFile = path.join(process.cwd(), './build', locale, relativeFile);
         params.s3Params.Key = relativeFile;
 
         if (isFileCompressed) params.s3Params.ContentEncoding = 'gzip';
