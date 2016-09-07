@@ -113,12 +113,12 @@ export default function deploy({env = 'prod'} = {env: 'prod'}) {
         }
       });
       const defaultS3Params = {
-        Bucket: AWSS3Bucket
+        Bucket: bucket
       };
       const compressed = await compress();
 
       if (compressed.assetsFiles.length > 0) {
-        log.white('Deploying to ').blue(AWSS3Bucket).white('.').info();
+        log.white('Deploying to ').blue(bucket).white('.').info();
       } else {
         log.yellow('No sources found. Skipping deployment.').info();
       }
@@ -128,7 +128,7 @@ export default function deploy({env = 'prod'} = {env: 'prod'}) {
           s3Params: JSON.parse(JSON.stringify(defaultS3Params))
         };
 
-        const relativeFile = file.replace(path.join(process.cwd(), './build/', locale), '');
+        const relativeFile = file.replace(path.join(process.cwd(), './build/', `${locale}/`), '');
         const isFileCompressed = compressed.compressedFiles.indexOf(file) > -1;
 
         params.localFile = path.join(process.cwd(), './build', locale, relativeFile);
