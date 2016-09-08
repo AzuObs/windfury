@@ -17,8 +17,12 @@ async function compress() {
     const algorithm = zlib.gzip;
     const assetsDir = path.join(process.cwd(), './build');
 
-    recursive(assetsDir, ['*.{css,js,txt,xml,ico,html}'], (nonCompressibleErr, nonCompressibleFiles) => {
-      recursive(assetsDir, ['!*.{css,js,html}'], (compressibleErr, compressibleFiles) => {
+    recursive(assetsDir, [
+      '*.{css,js,html}',
+      'webpack-assets.json',
+      'static.js'
+    ], (nonCompressibleErr, nonCompressibleFiles) => {
+      recursive(assetsDir, ['!*.{css,js,html}', 'static.js'], (compressibleErr, compressibleFiles) => {
         const compressedFiles = [];
         const toCompressFiles = _.clone(compressedFiles);
 
