@@ -65,7 +65,7 @@ export default function(options = {}) {
           loader: 'json'
         },
         {
-          test: /\.(png|jpg|jpg|gif|svg|woff|woff2|eot)/,
+          test: /\.(png|jpg|gif|svg|woff|woff2)/,
           include: path.join(process.cwd(), './src'),
           loader: 'file'
         }

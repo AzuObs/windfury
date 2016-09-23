@@ -48,12 +48,7 @@ export default function(options = {}) {
           loader: 'json'
         },
         {
-          test: /\.eot$/,
-          include: path.join(process.cwd(), './src'),
-          loader: 'file?name=[path][name]-[hash].[ext]'
-        },
-        {
-          test: /\.(png|jpg|jpg|gif|svg|woff|woff2)$/,
+          test: /\.(png|jpg|gif|svg|woff|woff2)$/,
           include: path.join(process.cwd(), './src'),
           loaders: [
             'url?limit=10000&name=[path][name]-[hash].[ext]',
@@ -88,8 +83,8 @@ export default function(options = {}) {
     target: 'web',
     name: 'client',
     entry: {
-      app: [path.join(process.cwd(), './src/client.js')],
-      async: [path.join(process.cwd(), './src/async.js')]
+      app: [path.join(__dirname, '../utils/entry-points/client.js')],
+      async: [path.join(__dirname, '../utils/entry-points/async.js')]
     },
     output: {
       ...config.output,
