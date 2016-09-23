@@ -26,25 +26,18 @@ async function compress() {
         const compressedFiles = [];
         const toCompressFiles = _.clone(compressibleFiles);
 
-        let originalSize = 0;
-
         if (toCompressFiles.length > 0) {
           return compressibleFiles.map(file => {
             const content = fs.readFileSync(file, 'utf-8');
-
-            originalSize = content.length;
 
             return algorithm(content, {
               level: 9
             }, (algorithmErr, result) => {
               toCompressFiles.splice(toCompressFiles.indexOf(file), 1);
+              fs.writeFileSync(file, result);
+              compressedFiles.push(file);
 
-              if (result.length / originalSize > 0.8) {
-                fs.writeFileSync(file, result);
-                compressedFiles.push(file);
-
-                log.green(path.basename(file)).white(' is now gzipped.').info();
-              }
+              log.green(path.basename(file)).white(' is now gzipped.').info();
 
               if (toCompressFiles.length === 0) {
                 return resolve({
