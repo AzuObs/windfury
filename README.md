@@ -91,3 +91,5 @@ env:
 Windfury is [MIT licensed](./LICENSE).
 
 Windfury documentation is [Creative Commons licensed](./LICENSE-docs).
+
+Examples provided in this repository and in the documentation are [separately licensed](./LICENSE-examples).
