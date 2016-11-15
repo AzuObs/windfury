@@ -1,4 +1,6 @@
 .idea/
+lib/
+.cache/
 node_modules/
 .DS_Store
 *.log
